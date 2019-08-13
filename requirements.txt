@@ -1,0 +1,9 @@
+
+#docs
+sphinx
+recommonmark
+commonmark
+sphinx-autobuild
+doc8
+autodoc
+

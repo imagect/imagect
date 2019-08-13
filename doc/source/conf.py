@@ -18,6 +18,7 @@ docs_dir = os.path.dirname(__file__)
 repo_dir = os.path.abspath(os.path.join(docs_dir, '../..'))
 sys.path.insert(0, repo_dir)
 os.chdir(repo_dir)
+print(repo_dir)
 
 
 # -- Project information -----------------------------------------------------
@@ -35,10 +36,13 @@ author = 'ChenZhihui'
 extensions = [
   'sphinx.ext.autodoc',
   'sphinx.ext.todo',
+  'sphinx.ext.intersphinx',
   'sphinx.ext.coverage',
   'sphinx.ext.viewcode',
   'sphinx.ext.autosummary',
   'sphinx.ext.napoleon',
+  'repoze.sphinx.autointerface',
+  "recommonmark"
 ]
 
 master_doc = 'contents'
@@ -72,17 +76,23 @@ todo_include_todos = True
 # use markdown
 from recommonmark.parser import CommonMarkParser
     
-source_parsers = {
-        '.md': CommonMarkParser,
-}
+# source_parsers = {
+#         '.md': CommonMarkParser,
+# }
     
-source_suffix = ['.rst', '.md']
+source_suffix = {
+        '.rst' : "restructuredtext",
+        '.md' : "markdown",
+         ".txt" : "markdown"
+         }
 
 import recommonmark.transform
-github_doc_root = 'https://github.com/rtfd/recommonmark/tree/master/doc/'
+github_doc_root = 'https://github.com/imagect/imagect/tree/master/doc/source'
 def setup(app):
     app.add_config_value('recommonmark_config', {
             'url_resolver': lambda url: github_doc_root + url,
             'auto_toc_tree_section': 'Contents',
             }, True)
     app.add_transform(recommonmark.transform.AutoStructify)
+
+#     app.add_source_parser(CommonMarkParser)

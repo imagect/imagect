@@ -4,6 +4,9 @@ sphinx
 recommonmark
 commonmark
 sphinx-autobuild
+repoze.sphinx.autointerface
 doc8
 autodoc
 
+# component
+zope.component

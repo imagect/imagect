@@ -10,3 +10,8 @@ autodoc
 
 # component
 zope.component
+
+# gui
+pyqt5
+rx
+asyncqt

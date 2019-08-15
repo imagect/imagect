@@ -1,13 +1,20 @@
 # interfaces
 
-## interfaces defination
+## apis
+
+### IMainWin
 
 ```eval_rst
-.. autointerface:: imagect.mainwin.IMainWin
-
+.. autointerface:: imagect.api.mainwin.IMainWin
 ```
 
-## apis
+### CtApp
+
+```eval_rst
+.. autointerface:: imagect.api.ctapp.CtApp
+```
+
+## core
 
 ```eval_rst
 .. toctree::

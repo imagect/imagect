@@ -1,0 +1,10 @@
+{
+    "python.pythonPath": "venv/bin/python3.7",
+    "restructuredtext.confPath": "${workspaceFolder}/doc/source",
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH" : "${workspaceFolder}:${PYTHONPATH}"
+    },
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH" : "${workspaceFolder};${PYTHONPATH}"
+    }
+}

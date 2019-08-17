@@ -1,5 +1,8 @@
 
 from imagect.api.mainwin import IMainWin
+import imagect.api.actmgr
+import imagect.core.actmgr
+from imagect.api.actmgr import addAct, addFun
 import imagect.api.ctapp as ctapp
 from zope import interface
 from PyQt5.QtWidgets import QMainWindow, QAction, QToolBar
@@ -35,6 +38,31 @@ from zope.component import getUtility
 def get() :
     return getUtility(IMainWin)
 
+@addFun("file.exit", text="&Exit")
+def appexit():
+    app = ctapp.get().exit()
+
+
+@addFun("file.test", text="&Test")
+def apptest():
+    win = get()
+    win.showMessage("Test Message")
+
+@addFun("file.test.fun1", text="&Test")
+def apptest():
+    win = get()
+    win.showMessage("Test Message")
+
+@addFun("file.test.fun2", text="&Test")
+def apptest():
+    win = get()
+    win.showMessage("Test Message")
+
+@addFun("file.test.fun3", text="&Test")
+def apptest():
+    win = get()
+    win.showMessage("Test Message")
+
 
 class ExitAction(QAction):
     def __init__(self, parent=None):
@@ -49,5 +77,4 @@ class TestMsgAction(QAction):
         def show() :
             win = get()
             win.showMessage("Test Message")
-
         self.triggered.connect(show)

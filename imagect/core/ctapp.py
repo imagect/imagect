@@ -1,17 +1,13 @@
 
-import sys
-
-print(sys.path)
-
-from imagect.api.ctapp import ICtApp
+from imagect.api.ctapp import IApp
 from zope import interface 
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5 import QtCore
 from asyncqt import QEventLoop, QThreadExecutor
 import asyncio
 from rx.scheduler.mainloop import QtScheduler
 
-@interface.implementer(ICtApp)
+@interface.implementer(IApp)
 class CtApp(QApplication):
 
     """
@@ -31,6 +27,13 @@ class CtApp(QApplication):
 
     def rx_scheduler(self):
         return self.scheduler
+
+    def showMsg(self, title : str, msg : str):
+        """
+        show message box
+        """
+        QMessageBox.information(None, title, msg)
+        pass
 
 
 if __name__ == "__main__" :

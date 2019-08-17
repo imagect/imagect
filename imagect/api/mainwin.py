@@ -14,7 +14,7 @@ class IMainWin(interface.Interface) :
         """
         pass
 
-    def menubar() :
+    def menuBar() :
         """
         menubar
         """

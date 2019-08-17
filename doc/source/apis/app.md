@@ -1,9 +1,9 @@
-# Main Window
+# Application
 
 ## API
 
 ```eval_rst
-.. automodule:: imagect.api.mainwin
+.. automodule:: imagect.api.ctapp
    :members:
    :undoc-members:
    :show-inheritance:
@@ -12,7 +12,7 @@
 ## IMPL
 
 ```eval_rst
-.. automodule:: imagect.core.mainwin
+.. automodule:: imagect.core.ctapp
    :members:
    :undoc-members:
    :show-inheritance:

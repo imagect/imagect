@@ -8,6 +8,9 @@ repoze.sphinx.autointerface
 doc8
 autodoc
 
+#devtool
+autopep8
+
 # component
 zope.component
 
@@ -15,3 +18,11 @@ zope.component
 pyqt5
 rx
 asyncqt
+
+# datetime
+pytz
+iso8601
+datetime
+
+# fp
+first

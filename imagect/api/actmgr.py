@@ -1,7 +1,7 @@
 from zope.interface import Interface, Attribute
 from zope.component import getUtility
 from PyQt5.QtWidgets import QAction, QMenu, QWidgetAction
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtCore import QObject
 from typing import List
 from collections import namedtuple
@@ -17,7 +17,8 @@ class IAction(object):
         index = 0,
         callable = None,
         widget = None,
-        fetch = None
+        fetch = None,
+        shortcut = None
     ):
         super().__init__()
         self.icon = icon
@@ -28,6 +29,7 @@ class IAction(object):
         self.index = index
         self.widget = widget
         self.fetch = fetch
+        self.shortcut = shortcut
 
     def __repr__(self):
         return "id={}, title={}".format(self.id, self.title)
@@ -36,7 +38,7 @@ class IAction(object):
 #     ["icon", "callable", "id", "pid", "title", "index", "widget"]
 # )
 
-def createAction(id, title, callable = None, index =0) :
+def createAction(id, title, callable = None, index =0, shortcut=None) :
     return IAction(
         icon="",
         id = id,
@@ -44,10 +46,11 @@ def createAction(id, title, callable = None, index =0) :
         title = title,
         index=index,
         callable = callable,
-        widget=None
+        widget=None,
+        shortcut = shortcut
     )
 
-def createWAction(id, title, widget=None, index =0) :
+def createWAction(id, title, widget=None, index =0, shortcut=None) :
     return IAction(
         icon="",
         id = id,
@@ -55,10 +58,11 @@ def createWAction(id, title, widget=None, index =0) :
         title = title,
         index=index,
         callable = None,
-        widget=widget
+        widget=widget,
+        shortcut = shortcut
     )
 
-def creatchFecthAction(id, title, fetch, index = 0):
+def creatchFecthAction(id, title, fetch, index = 0, shortcut=None):
     return IAction(
         icon="",
         id = id,
@@ -67,7 +71,8 @@ def creatchFecthAction(id, title, fetch, index = 0):
         index=index,
         callable = None,
         widget= None,
-        fetch = fetch
+        fetch = fetch,
+        shortcut = shortcut
     )
 
 class IActMgr(Interface) :
@@ -83,6 +88,8 @@ class IActMgr(Interface) :
     edit = Attribute("""edit menu""")
 
     image= Attribute("""image menu""")
+
+    test = Attribute("""test menu""")
 
     def topActions() -> List[IAction] :
         pass
@@ -124,9 +131,13 @@ def toQAction(act : IAction, parent : QObject) :
     
     qact = QAction(QIcon(act.icon), act.title, parent=parent)
 
+    if act.shortcut is not None:
+        qact.setShortcut(act.shortcut)
+
+    children = get().queryChildren(act.id)
+
     # action widget
     if act.widget :
-        qact = QAction(QIcon(act.icon), act.title, parent=parent)
         menu = QMenu()
         wact = QWidgetAction(menu)  
         wact.setDefaultWidget(act.widget(menu))
@@ -138,58 +149,38 @@ def toQAction(act : IAction, parent : QObject) :
         # wact.setIcon(QIcon(act.icon))
         return qact
 
-    children = get().queryChildren(act.id)
-
     # single action
     if act.callable is not None:
         def cb(checked) :
             print(act)
+            print(qact.text())
             act.callable()
         qact.triggered.connect(cb)
         return qact
 
     # sub menu
-    else :   
+    elif act.fetch is not None:   
         menu = QMenu()
         qact.setMenu(menu)
 
-        def fresh():        
-            if act.fetch is not None :
-                acts = act.fetch(qact)
-                for a in acts:
-                    menu.addAction(a)
-            else:    
-                for a in children:
-                    qa = toQAction(a, qact)
-                    menu.addAction(qa) 
-
-        def aboutToShow(): 
-            fresh()               
-            # pass
-
-        def aboutToHide():
-            acts = menu.actions()            
-            menu.clear()
-
+        def fresh():   
+            acts = act.fetch(menu)
             for a in acts:
-                a.deleteLater()
-            pass
+                menu.addAction(a)
+            
+        menu.aboutToShow.connect(fresh)
+        menu.aboutToHide.connect(menu.clear)
+        return qact  
 
-        menu.aboutToShow.connect(aboutToShow)
-        menu.aboutToHide.connect(aboutToHide)
-        return qact         
+    else :        
+        menu = QMenu()
+        qact.setMenu(menu)
+  
+        for a in children:
+            qa = toQAction(a, qact)
+            menu.addAction(qa) 
 
-def toQActionWithSubMenu(act : IAction, mngr: IActMgr, parent : QObject) :
-    root = toQAction(act, parent)
-    # children = mngr.queryChildren(act.id)
-    # if len(children) > 0 or act.pid == "":
-    #     submenu = QMenu(act.title, parent=None)
-    #     submenu.setTitle(act.title)
-    #     root.setMenu(submenu)
-    #     for a in children :
-    #         qact = toQActionWithSubMenu(a, mngr, root)
-    #         submenu.addAction(qact)
-    return root
+        return qact        
 
 def renameAct(id : str, title :str, index = 0):
     get().renameAct(id, title, index)
@@ -197,21 +188,21 @@ def renameAct(id : str, title :str, index = 0):
 def addAct(act : IAction):
     get().addAct(act)
 
-def addActFun(id : str, text: str, index=0):
+def addActFun(id : str, text: str, index=0, shortcut=None):
     def add(callable):
-        a = createAction(id, title=text, callable=callable, index=index)
+        a = createAction(id, title=text, callable=callable, index=index, shortcut=shortcut)
         addAct(a)
     return add
 
-def addActWdg(id: str, text: str, index=0):
+def addActWdg(id: str, text: str, index=0, shortcut=None):
     def add(wdg_factory) :
-        a = createWAction(id, title=text, widget=wdg_factory, index=index)
+        a = createWAction(id, title=text, widget=wdg_factory, index=index, shortcut=shortcut)
         addAct(a)
     return add
 
-def addActFetch(id : str, title : str, index = 0):
+def addActFetch(id : str, title : str, index = 0, shortcut=None):
     def add(fetch) :
-        a = creatchFecthAction(id, title=title, fetch=fetch, index=index)
+        a = creatchFecthAction(id, title=title, fetch=fetch, index=index, shortcut=shortcut)
         addAct(a)
     return add
 

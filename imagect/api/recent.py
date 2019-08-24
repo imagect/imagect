@@ -27,4 +27,6 @@ class IRecent(Interface):
         """
         pass 
 
-        
+
+def get() :
+    return getUtility(IRecent) 

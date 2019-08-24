@@ -1,11 +1,12 @@
 from imagect.api.ctapp import IApp
 from imagect.core.ctapp import CtApp
-import imagect.core.recent
 from imagect.api.mainwin import IMainWin
-from imagect.core.mainwin import MainWin, ExitAction, TestMsgAction
+from imagect.core.mainwin import MainWin
 import imagect.core.actmgr 
 import imagect.api.actmgr 
-from imagect.api.actmgr import IActMgr, toQActionWithSubMenu
+from imagect.api.recent import IRecent
+import imagect.core.recent
+from imagect.api.actmgr import IActMgr, toQAction
 from zope.component import getGlobalSiteManager
 
 def __main__() :
@@ -19,6 +20,9 @@ def __main__() :
 
     actmgr = imagect.api.actmgr.get()
 
+    recent = imagect.core.recent.Recent()
+    gsm.registerUtility(recent, IRecent)
+
     # print(actmgr.actions)
 
     win.show()
@@ -26,10 +30,8 @@ def __main__() :
     menubar = win.menuBar()
     topacts = imagect.api.actmgr.get().topActions()
     for act in topacts:
-        menubar.addMenu(toQActionWithSubMenu(act, actmgr, menubar).menu())
+        menubar.addMenu(toQAction(act, menubar).menu())
 
-    # addAction(actmgr.file, ExitAction)
-    # addAction(actmgr.file, TestMsgAction)
     app.exec()
 
 if __name__ == "__main__" :

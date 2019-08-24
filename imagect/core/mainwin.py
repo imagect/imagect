@@ -60,18 +60,3 @@ def appPrint():
         print("id={}, title={}".format(a.id, a.title))
 
 renameAct("file.exampe", "Examples", index =12)
-
-class ExitAction(QAction):
-    def __init__(self, parent=None):
-        super().__init__(QIcon(), "&Exit", parent=parent)
-        app = ctapp.get()
-        self.triggered.connect(app.exit)
-
-class TestMsgAction(QAction):
-    def __init__(self,  parent=None):
-        super().__init__(QIcon(), "Test", parent=parent)
-
-        def show() :
-            win = get()
-            win.showMessage("Test Message")
-        self.triggered.connect(show)

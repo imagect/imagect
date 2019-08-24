@@ -1,5 +1,6 @@
 from zope import interface 
 from zope.component import getUtility
+import os.path 
 
 class IApp(interface.Interface) :
     """
@@ -33,6 +34,18 @@ class IApp(interface.Interface) :
     def showMsg(title : str, msg : str):
         """
         show message box
+        """
+        pass
+
+    def appDir() -> str:
+        """
+        application dir
+        """
+        pass
+
+    def appDataDir() -> str:
+        """
+        appDataDir dir
         """
         pass
 

@@ -3,6 +3,7 @@ from imagect.api.ctapp import IApp
 from zope import interface 
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5 import QtCore
+from PyQt5.QtCore import QStandardPaths
 from asyncqt import QEventLoop, QThreadExecutor
 import asyncio
 from rx.scheduler.mainloop import QtScheduler
@@ -16,6 +17,7 @@ class CtApp(QApplication):
 
     def __init__(self, argv):
         super().__init__(argv)
+        self.setApplicationName("imagect")
 
         self.loop = QEventLoop(self)
         asyncio.set_event_loop(self.loop)
@@ -34,6 +36,12 @@ class CtApp(QApplication):
         """
         QMessageBox.information(None, title, msg)
         pass
+
+    def appDir(self) -> str :
+        return self.applicationDirPath()
+
+    def appDataDir(self) -> str :
+        return QStandardPaths.writableLocation(QStandardPaths.AppDataLocation)
 
 
 if __name__ == "__main__" :

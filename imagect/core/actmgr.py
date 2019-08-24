@@ -12,14 +12,15 @@ class ActMgr(object) :
     ActMgr
     """
 
-    def __init__(self, ):
+    def __init__(self):
         super().__init__()
         self.actions = {}
         self.groups = defaultdict(dict)
         self.file = createAction("file", "File", index=0)
         self.edit = createAction("edit", "Edit")
         self.image= createAction("image", "Image")
-        for a in [self.file, self.edit, self.image] :
+        self.test = createAction("test", "Test")
+        for a in [self.file, self.edit, self.image, self.test] :
             self.addAct(a)
 
     def renameAct(self, id : str, title: str, index = 0):
@@ -28,7 +29,7 @@ class ActMgr(object) :
             self.actions[id].index = index
 
     def topActions(self) -> List[QAction] :
-        return [self.file, self.edit, self.image]
+        return [self.file, self.edit, self.image, self.test]
 
     def addAct(self, act :IAction):
         """

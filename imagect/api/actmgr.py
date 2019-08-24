@@ -11,12 +11,13 @@ class IAction(object):
     def __init__(
         self,
         icon,
-        callable,
         id,
         pid,
         title,
-        index,
-        widget
+        index = 0,
+        callable = None,
+        widget = None,
+        fetch = None
     ):
         super().__init__()
         self.icon = icon
@@ -26,6 +27,7 @@ class IAction(object):
         self.title = title
         self.index = index
         self.widget = widget
+        self.fetch = fetch
 
     def __repr__(self):
         return "id={}, title={}".format(self.id, self.title)
@@ -37,23 +39,35 @@ class IAction(object):
 def createAction(id, title, callable = None, index =0) :
     return IAction(
         icon="",
-        callable = callable,
         id = id,
         pid = ".".join(id.split(".")[0:-1]),
         title = title,
         index=index,
+        callable = callable,
         widget=None
     )
 
 def createWAction(id, title, widget=None, index =0) :
     return IAction(
         icon="",
-        callable = None,
         id = id,
         pid = ".".join(id.split(".")[0:-1]),
         title = title,
         index=index,
+        callable = None,
         widget=widget
+    )
+
+def creatchFecthAction(id, title, fetch, index = 0):
+    return IAction(
+        icon="",
+        id = id,
+        pid = ".".join(id.split(".")[0:-1]),
+        title = title,
+        index=index,
+        callable = None,
+        widget= None,
+        fetch = fetch
     )
 
 class IActMgr(Interface) :
@@ -139,10 +153,15 @@ def toQAction(act : IAction, parent : QObject) :
         menu = QMenu()
         qact.setMenu(menu)
 
-        def fresh():            
-            for a in children:
-                qa = toQAction(a, qact)
-                menu.addAction(qa) 
+        def fresh():        
+            if act.fetch is not None :
+                acts = act.fetch(qact)
+                for a in acts:
+                    menu.addAction(a)
+            else:    
+                for a in children:
+                    qa = toQAction(a, qact)
+                    menu.addAction(qa) 
 
         def aboutToShow(): 
             fresh()               
@@ -151,6 +170,7 @@ def toQAction(act : IAction, parent : QObject) :
         def aboutToHide():
             acts = menu.actions()            
             menu.clear()
+
             for a in acts:
                 a.deleteLater()
             pass
@@ -158,7 +178,6 @@ def toQAction(act : IAction, parent : QObject) :
         menu.aboutToShow.connect(aboutToShow)
         menu.aboutToHide.connect(aboutToHide)
         return qact         
-
 
 def toQActionWithSubMenu(act : IAction, mngr: IActMgr, parent : QObject) :
     root = toQAction(act, parent)
@@ -187,6 +206,12 @@ def addActFun(id : str, text: str, index=0):
 def addActWdg(id: str, text: str, index=0):
     def add(wdg_factory) :
         a = createWAction(id, title=text, widget=wdg_factory, index=index)
+        addAct(a)
+    return add
+
+def addActFetch(id : str, title : str, index = 0):
+    def add(fetch) :
+        a = creatchFecthAction(id, title=title, fetch=fetch, index=index)
         addAct(a)
     return add
 

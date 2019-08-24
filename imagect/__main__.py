@@ -1,5 +1,6 @@
 from imagect.api.ctapp import IApp
 from imagect.core.ctapp import CtApp
+import imagect.core.recent
 from imagect.api.mainwin import IMainWin
 from imagect.core.mainwin import MainWin, ExitAction, TestMsgAction
 import imagect.core.actmgr 

@@ -19,8 +19,7 @@ class ActMgr(object) :
         self.file = createAction("file", "File", index=0)
         self.edit = createAction("edit", "Edit")
         self.image= createAction("image", "Image")
-        self.recent = createAction("file.recent", "Recent File", index=2)
-        for a in [self.file, self.edit, self.image, self.recent] :
+        for a in [self.file, self.edit, self.image] :
             self.addAct(a)
 
     def renameAct(self, id : str, title: str, index = 0):

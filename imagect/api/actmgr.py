@@ -1,6 +1,6 @@
 from zope.interface import Interface, Attribute
 from zope.component import getUtility
-from PyQt5.QtWidgets import QAction, QMenu
+from PyQt5.QtWidgets import QAction, QMenu, QWidgetAction
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QObject
 from typing import List
@@ -8,7 +8,7 @@ from collections import namedtuple
 
 
 IAction = namedtuple("IAction",
-    ["icon", "callable", "id", "pid", "title", "index"]
+    ["icon", "callable", "id", "pid", "title", "index", "widget"]
 )
 
 def createAction(id, title, callable = None, index =0) :
@@ -18,7 +18,19 @@ def createAction(id, title, callable = None, index =0) :
         id = id,
         pid = ".".join(id.split(".")[0:-1]),
         title = title,
-        index=index
+        index=index,
+        widget=None
+    )
+
+def createWAction(id, title, widget=None, index =0) :
+    return IAction(
+        icon="",
+        callable = None,
+        id = id,
+        pid = ".".join(id.split(".")[0:-1]),
+        title = title,
+        index=index,
+        widget=widget
     )
 
 class IActMgr(Interface) :
@@ -60,10 +72,23 @@ def get() :
     return getUtility(IActMgr) 
 
 def toQAction(act : IAction, parent : QObject) :
-    qact = QAction(QIcon(act.icon), act.title, parent=parent)
-    if act.callable is not None: 
-        qact.triggered.connect(act.callable)
-    return qact
+    if act.widget is None:
+        qact = QAction(QIcon(act.icon), act.title, parent=parent)
+        if act.callable is not None: 
+            qact.triggered.connect(act.callable)
+        return qact    
+    else :        
+        qact = QAction(QIcon(act.icon), act.title, parent=parent)
+        menu = QMenu()
+        wact = QWidgetAction(menu)  
+        wact.setDefaultWidget(act.widget(menu))
+
+        menu.addAction(wact)   
+
+        qact.setMenu(menu) 
+        # wact.setText(act.title)
+        # wact.setIcon(QIcon(act.icon))
+        return qact
 
 def toQActionWithSubMenu(act : IAction, mngr: IActMgr, parent : QObject) :
     root = toQAction(act, parent)
@@ -80,9 +105,15 @@ def toQActionWithSubMenu(act : IAction, mngr: IActMgr, parent : QObject) :
 def addAct(act : IAction):
     get().addAct(act)
 
-def addFun(id : str, text: str):
+def addActFun(id : str, text: str):
     def add(callable):
         a = createAction(id, title=text, callable=callable)
+        addAct(a)
+    return add
+
+def addActWdg(id: str, text: str):
+    def add(wdg_factory) :
+        a = createWAction(id, title=text, widget=wdg_factory)
         addAct(a)
     return add
 

@@ -2,10 +2,10 @@
 from imagect.api.mainwin import IMainWin
 import imagect.api.actmgr
 import imagect.core.actmgr
-from imagect.api.actmgr import addAct, addFun
+from imagect.api.actmgr import addAct, addActFun, addActWdg
 import imagect.api.ctapp as ctapp
 from zope import interface
-from PyQt5.QtWidgets import QMainWindow, QAction, QToolBar
+from PyQt5.QtWidgets import QMainWindow, QAction, QToolBar, QLabel, QSpinBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
@@ -38,31 +38,26 @@ from zope.component import getUtility
 def get() :
     return getUtility(IMainWin)
 
-@addFun("file.exit", text="&Exit")
+@addActFun("file.exit", text="&Exit")
 def appexit():
     app = ctapp.get().exit()
 
-
-@addFun("file.test", text="&Test")
+@addActFun("file.test", text="&Test")
 def apptest():
     win = get()
     win.showMessage("Test Message")
 
-@addFun("file.test.fun1", text="&Test")
+@addActFun("file.test.fun1", text="addActFun")
 def apptest():
     win = get()
     win.showMessage("Test Message")
 
-@addFun("file.test.fun2", text="&Test")
-def apptest():
-    win = get()
-    win.showMessage("Test Message")
+@addActWdg("file.test.wdg", text="addActWdg")
+class ActWdg(QSpinBox) :
 
-@addFun("file.test.fun3", text="&Test")
-def apptest():
-    win = get()
-    win.showMessage("Test Message")
-
+    def __init__(self, parent):
+        super().__init__(parent)  
+        self.resize(300, 400)
 
 class ExitAction(QAction):
     def __init__(self, parent=None):

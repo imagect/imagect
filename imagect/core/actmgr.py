@@ -22,6 +22,10 @@ class ActMgr(object) :
         for a in [self.file, self.edit, self.image] :
             self.addAct(a)
 
+    def renameAct(self, id : str, title: str):
+        if id in self.actions:
+            self.actions[id].title = title
+
     def topActions(self) -> List[QAction] :
         return [self.file, self.edit, self.image]
 
@@ -49,12 +53,14 @@ class ActMgr(object) :
             self.actions.pop(id, None)
             self.groups[act.pid].pop(act.id)
 
-    def queryChildren(self, pid : str):
+    def queryChildren(self, pid : str)-> List[IAction]:
         """
         todo: sort by index
         """
         return self.groups[pid].values()
 
+    def queryAll(self) -> List[IAction] :
+        return [ self.actions[k] for k in self.actions ]
 
 from zope.component import getGlobalSiteManager
 gsm = getGlobalSiteManager()

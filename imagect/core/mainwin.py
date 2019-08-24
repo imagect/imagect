@@ -2,7 +2,7 @@
 from imagect.api.mainwin import IMainWin
 import imagect.api.actmgr
 import imagect.core.actmgr
-from imagect.api.actmgr import addAct, addActFun, addActWdg
+from imagect.api.actmgr import addAct, addActFun, addActWdg, renameAct
 import imagect.api.ctapp as ctapp
 from zope import interface
 from PyQt5.QtWidgets import QMainWindow, QAction, QToolBar, QLabel, QSpinBox
@@ -47,17 +47,28 @@ def apptest():
     win = get()
     win.showMessage("Test Message")
 
-@addActFun("file.test.fun1", text="addActFun")
-def apptest():
+@addActFun("file.test_submenu.fun1", text="addActFun")
+def appfun1():
     win = get()
     win.showMessage("Test Message")
 
-@addActWdg("file.test.wdg", text="addActWdg")
+@addActFun("file.test_submenu.Print", text="Print Actions")
+def appPrint():
+    mngr = imagect.api.actmgr.get()
+    acts = mngr.queryAll()
+    for a in acts:
+        print("id={}, title={}".format(a.id, a.title))
+
+@addActWdg("file.test_submenu.wdg", text="addActWdg")
 class ActWdg(QSpinBox) :
 
     def __init__(self, parent):
         super().__init__(parent)  
         self.resize(300, 400)
+
+
+
+renameAct("file.test_submenu", "SubMenu")
 
 class ExitAction(QAction):
     def __init__(self, parent=None):

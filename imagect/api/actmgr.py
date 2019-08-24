@@ -6,10 +6,33 @@ from PyQt5.QtCore import QObject
 from typing import List
 from collections import namedtuple
 
+class IAction(object):
+    
+    def __init__(
+        self,
+        icon,
+        callable,
+        id,
+        pid,
+        title,
+        index,
+        widget
+    ):
+        super().__init__()
+        self.icon = icon
+        self.callable = callable
+        self.id = id
+        self.pid = pid
+        self.title = title
+        self.index = index
+        self.widget = widget
 
-IAction = namedtuple("IAction",
-    ["icon", "callable", "id", "pid", "title", "index", "widget"]
-)
+    def __repr__(self):
+        return "id={}, title={}".format(self.id, self.title)
+
+# IAction = namedtuple("IAction",
+#     ["icon", "callable", "id", "pid", "title", "index", "widget"]
+# )
 
 def createAction(id, title, callable = None, index =0) :
     return IAction(
@@ -62,9 +85,21 @@ class IActMgr(Interface) :
         """
         pass
 
-    def queryChildren(self, pid : str):
+    def renameAct(id: str, title: str):
+        """
+        set action title
+        """
+        pass
+
+    def queryChildren(self, pid : str) -> List[IAction]:
         """
         query actions by parent id
+        """
+        pass
+
+    def queryAll(self) -> List[IAction] :
+        """
+        query all actions
         """
         pass
 
@@ -72,12 +107,11 @@ def get() :
     return getUtility(IActMgr) 
 
 def toQAction(act : IAction, parent : QObject) :
-    if act.widget is None:
-        qact = QAction(QIcon(act.icon), act.title, parent=parent)
-        if act.callable is not None: 
-            qact.triggered.connect(act.callable)
-        return qact    
-    else :        
+    
+    qact = QAction(QIcon(act.icon), act.title, parent=parent)
+
+    # action widget
+    if act.widget :
         qact = QAction(QIcon(act.icon), act.title, parent=parent)
         menu = QMenu()
         wact = QWidgetAction(menu)  
@@ -90,17 +124,56 @@ def toQAction(act : IAction, parent : QObject) :
         # wact.setIcon(QIcon(act.icon))
         return qact
 
+    children = get().queryChildren(act.id)
+
+    # single action
+    if act.callable is not None:
+        def cb(checked) :
+            print(act)
+            act.callable()
+        qact.triggered.connect(cb)
+        return qact
+
+    # sub menu
+    else :   
+        menu = QMenu()
+        qact.setMenu(menu)
+
+        def fresh():            
+            for a in children:
+                qa = toQAction(a, qact)
+                menu.addAction(qa) 
+
+        def aboutToShow(): 
+            fresh()               
+            # pass
+
+        def aboutToHide():
+            acts = menu.actions()            
+            menu.clear()
+            for a in acts:
+                a.deleteLater()
+            pass
+
+        menu.aboutToShow.connect(aboutToShow)
+        menu.aboutToHide.connect(aboutToHide)
+        return qact         
+
+
 def toQActionWithSubMenu(act : IAction, mngr: IActMgr, parent : QObject) :
     root = toQAction(act, parent)
-    children = mngr.queryChildren(act.id)
-    if len(children) > 0 or act.pid == "":
-        submenu = QMenu(act.title, parent=None)
-        submenu.setTitle(act.title)
-        root.setMenu(submenu)
-        for a in children :
-            qact = toQActionWithSubMenu(a, mngr, root)
-            submenu.addAction(qact)
+    # children = mngr.queryChildren(act.id)
+    # if len(children) > 0 or act.pid == "":
+    #     submenu = QMenu(act.title, parent=None)
+    #     submenu.setTitle(act.title)
+    #     root.setMenu(submenu)
+    #     for a in children :
+    #         qact = toQActionWithSubMenu(a, mngr, root)
+    #         submenu.addAction(qact)
     return root
+
+def renameAct(id : str, title :str):
+    get().renameAct(id, title)
 
 def addAct(act : IAction):
     get().addAct(act)

@@ -38,37 +38,28 @@ from zope.component import getUtility
 def get() :
     return getUtility(IMainWin)
 
-@addActFun("file.exit", text="&Exit")
+@addActFun("file.exit", text="&Exit", index=10)
 def appexit():
     app = ctapp.get().exit()
 
-@addActFun("file.test", text="&Test")
+@addActFun("file.exampe_menu.msg", text="&Message", index=1)
 def apptest():
     win = get()
     win.showMessage("Test Message")
 
-@addActFun("file.test_submenu.fun1", text="addActFun")
-def appfun1():
-    win = get()
-    win.showMessage("Test Message")
+@addActWdg("file.exampe_menu.wdg", text="Show Widget", index = 3)
+class ActWdg(QSpinBox) :
+    def __init__(self, parent):
+        super().__init__(parent)  
 
-@addActFun("file.test_submenu.Print", text="Print Actions")
+@addActFun("file.exampe_menu.print", text="Print Actions", index = 4)
 def appPrint():
     mngr = imagect.api.actmgr.get()
     acts = mngr.queryAll()
     for a in acts:
         print("id={}, title={}".format(a.id, a.title))
 
-@addActWdg("file.test_submenu.wdg", text="addActWdg")
-class ActWdg(QSpinBox) :
-
-    def __init__(self, parent):
-        super().__init__(parent)  
-        self.resize(300, 400)
-
-
-
-renameAct("file.test_submenu", "SubMenu")
+renameAct("file.exampe_menu", "Examples", index =12)
 
 class ExitAction(QAction):
     def __init__(self, parent=None):

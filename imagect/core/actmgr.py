@@ -16,15 +16,17 @@ class ActMgr(object) :
         super().__init__()
         self.actions = {}
         self.groups = defaultdict(dict)
-        self.file = createAction("file", "File")
+        self.file = createAction("file", "File", index=0)
         self.edit = createAction("edit", "Edit")
         self.image= createAction("image", "Image")
-        for a in [self.file, self.edit, self.image] :
+        self.recent = createAction("file.recent", "Recent File", index=2)
+        for a in [self.file, self.edit, self.image, self.recent] :
             self.addAct(a)
 
-    def renameAct(self, id : str, title: str):
+    def renameAct(self, id : str, title: str, index = 0):
         if id in self.actions:
             self.actions[id].title = title
+            self.actions[id].index = index
 
     def topActions(self) -> List[QAction] :
         return [self.file, self.edit, self.image]
@@ -57,10 +59,14 @@ class ActMgr(object) :
         """
         todo: sort by index
         """
-        return self.groups[pid].values()
+        return self.sort(self.groups[pid].values())
 
     def queryAll(self) -> List[IAction] :
-        return [ self.actions[k] for k in self.actions ]
+        return self.sort([ self.actions[k] for k in self.actions ])
+
+    
+    def sort(self, acts : List[IAction]) -> List[IAction] :
+        return sorted(acts, key = lambda act: act.index)
 
 from zope.component import getGlobalSiteManager
 gsm = getGlobalSiteManager()

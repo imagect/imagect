@@ -85,7 +85,7 @@ class IActMgr(Interface) :
         """
         pass
 
-    def renameAct(id: str, title: str):
+    def renameAct(id: str, title: str, index = 0):
         """
         set action title
         """
@@ -172,21 +172,21 @@ def toQActionWithSubMenu(act : IAction, mngr: IActMgr, parent : QObject) :
     #         submenu.addAction(qact)
     return root
 
-def renameAct(id : str, title :str):
-    get().renameAct(id, title)
+def renameAct(id : str, title :str, index = 0):
+    get().renameAct(id, title, index)
 
 def addAct(act : IAction):
     get().addAct(act)
 
-def addActFun(id : str, text: str):
+def addActFun(id : str, text: str, index=0):
     def add(callable):
-        a = createAction(id, title=text, callable=callable)
+        a = createAction(id, title=text, callable=callable, index=index)
         addAct(a)
     return add
 
-def addActWdg(id: str, text: str):
+def addActWdg(id: str, text: str, index=0):
     def add(wdg_factory) :
-        a = createWAction(id, title=text, widget=wdg_factory)
+        a = createWAction(id, title=text, widget=wdg_factory, index=index)
         addAct(a)
     return add
 

@@ -62,7 +62,7 @@ class ActMgr(object) :
         return self.sort(self.groups[pid].values())
 
     def queryAll(self) -> List[IAction] :
-        return self.sort([ self.actions[k] for k in self.actions ])
+        return sorted([ self.actions[k] for k in self.actions ], key = lambda a : a.id)
 
     
     def sort(self, acts : List[IAction]) -> List[IAction] :

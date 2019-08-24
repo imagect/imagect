@@ -42,24 +42,24 @@ def get() :
 def appexit():
     app = ctapp.get().exit()
 
-@addActFun("file.exampe_menu.msg", text="&Message", index=1)
+@addActFun("file.exampe.msg", text="&Message", index=1)
 def apptest():
     win = get()
     win.showMessage("Test Message")
 
-@addActWdg("file.exampe_menu.wdg", text="Show Widget", index = 3)
+@addActWdg("file.exampe.wdg", text="Show Widget", index = 3)
 class ActWdg(QSpinBox) :
     def __init__(self, parent):
         super().__init__(parent)  
 
-@addActFun("file.exampe_menu.print", text="Print Actions", index = 4)
+@addActFun("file.exampe.print", text="Print Actions", index = 4)
 def appPrint():
     mngr = imagect.api.actmgr.get()
     acts = mngr.queryAll()
     for a in acts:
         print("id={}, title={}".format(a.id, a.title))
 
-renameAct("file.exampe_menu", "Examples", index =12)
+renameAct("file.exampe", "Examples", index =12)
 
 class ExitAction(QAction):
     def __init__(self, parent=None):

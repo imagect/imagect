@@ -10,7 +10,7 @@
         show = fileMenu.addAction("Show")
 
         def showMsg() :
-            ctapp.get().showMsg("title", "hello")
+            app.get().showMsg("title", "hello")
         show.triggered.connect(showMsg)
 ```
 

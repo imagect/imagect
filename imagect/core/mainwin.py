@@ -3,7 +3,7 @@ from imagect.api.mainwin import IMainWin
 import imagect.api.actmgr
 import imagect.core.actmgr
 from imagect.api.actmgr import addAct, addActFun, addActWdg, renameAct
-import imagect.api.ctapp as ctapp
+import imagect.api.app as app
 from zope import interface
 from PyQt5.QtWidgets import QMainWindow, QAction, QToolBar, QLabel, QSpinBox
 from PyQt5.QtCore import Qt
@@ -21,7 +21,7 @@ def make_jupyter_widget_with_kernel():
     kernel_manager = QtInProcessKernelManager(kernel_name='python3')
     kernel_manager.start_kernel(show_banner=True)
     kernel = kernel_manager.kernel
-    kernel.io_loop=ctapp.get().asyncio_loop()
+    kernel.io_loop=app.get().asyncio_loop()
 
     kernel_client = kernel_manager.client()
     kernel_client.start_channels()
@@ -44,7 +44,7 @@ class MainWin(QMainWindow) :
 
         self._jupyter_widget = make_jupyter_widget_with_kernel()
         self.setCentralWidget(self._jupyter_widget)
-        ctapp.get().app().aboutToQuit.connect(self.shutdown_kernel)
+        app.get().aboutToQuit.connect(self.shutdown_kernel)
 
         self.statusBar()
         self.toolBarFile = QToolBar(self)
@@ -73,7 +73,7 @@ def get() :
 
 @addActFun("file.exit", text="&Exit", index=10)
 def appexit():
-    app = ctapp.get().exit()
+    app.get().exit()
 
 @addActFun("file.exampe.msg", text="&Message", index=1)
 def apptest():

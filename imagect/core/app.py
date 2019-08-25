@@ -1,5 +1,5 @@
 
-from imagect.api.ctapp import IApp
+from imagect.api.app import IApp
 from zope import interface 
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5 import QtCore
@@ -9,7 +9,7 @@ import asyncio
 from rx.scheduler.mainloop import QtScheduler
 
 @interface.implementer(IApp)
-class CtApp(QApplication):
+class App(QApplication):
 
     """
     application
@@ -23,9 +23,6 @@ class CtApp(QApplication):
         asyncio.set_event_loop(self.loop)
 
         self.scheduler = QtScheduler(QtCore)
-
-    def app(self):
-        return self
         
     def asyncio_loop(self):
         return self.loop
@@ -102,12 +99,12 @@ if __name__ == "__main__" :
         def cancel() :
             close.set_result(0)
 
-    app = CtApp([])
+    a = App([])
 
     window = Window()
     window.show()
 
-    showProgress(app.asyncio_loop())
+    showProgress(a.asyncio_loop())
 
     text = 'TIME FLIES LIKE AN ARROW'
 
@@ -131,6 +128,6 @@ if __name__ == "__main__" :
     rx.from_(text).pipe(
         mapper,
         labeler,
-    ).subscribe(on_next, on_error=print, scheduler=app.rx_scheduler())
+    ).subscribe(on_next, on_error=print, scheduler=a.rx_scheduler())
 
-    sys.exit(app.exec_())
+    sys.exit(a.exec_())

@@ -1,5 +1,5 @@
-from imagect.api.ctapp import IApp
-from imagect.core.ctapp import CtApp
+from imagect.api.app import IApp
+from imagect.core.app import App
 from imagect.api.mainwin import IMainWin
 from imagect.core.mainwin import MainWin
 from imagect.api.console import IConsole
@@ -14,8 +14,8 @@ from zope.component import getGlobalSiteManager
 def __main__() :
     gsm = getGlobalSiteManager()
 
-    app = CtApp([])
-    gsm.registerUtility(app, IApp)
+    application = App([])
+    gsm.registerUtility(application, IApp)
 
     win = MainWin()
     gsm.registerUtility(win, IMainWin)
@@ -35,7 +35,7 @@ def __main__() :
     for act in topacts:
         menubar.addMenu(toQAction(act, menubar).menu())
 
-    app.exec()
+    application.exec()
 
 if __name__ == "__main__" :
 

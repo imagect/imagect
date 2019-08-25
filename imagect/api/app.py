@@ -7,12 +7,6 @@ class IApp(interface.Interface) :
     App Interface for imagect
     """
 
-    def app() :
-        """
-        QApplication
-        """
-        pass 
-
     def mainwin() :
         """
         IMainWin

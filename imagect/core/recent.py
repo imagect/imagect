@@ -13,7 +13,7 @@ from PyQt5.QtCore import QObject
 
 import imagect.api.actmgr
 import imagect.core.actmgr
-import imagect.api.ctapp as app
+import imagect.api.app as app
 from imagect.api.actmgr import addActFetch, addActFun, renameAct
 from imagect.api.recent import IRecent
 import imagect.api.recent as recent

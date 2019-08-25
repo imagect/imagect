@@ -2,6 +2,8 @@ from imagect.api.ctapp import IApp
 from imagect.core.ctapp import CtApp
 from imagect.api.mainwin import IMainWin
 from imagect.core.mainwin import MainWin
+from imagect.api.console import IConsole
+import imagect.core.console
 import imagect.core.actmgr 
 import imagect.api.actmgr 
 from imagect.api.recent import IRecent
@@ -23,7 +25,8 @@ def __main__() :
     recent = imagect.core.recent.Recent()
     gsm.registerUtility(recent, IRecent)
 
-    # print(actmgr.actions)
+    console = imagect.core.console.Console()
+    gsm.registerUtility(console, IConsole)
 
     win.show()
 

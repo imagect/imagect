@@ -1,6 +1,5 @@
-
-
 from zope import interface
+from zope.component import getUtility
 
 class IMainWin(interface.Interface) :
 
@@ -19,3 +18,12 @@ class IMainWin(interface.Interface) :
         menubar
         """
         pass
+
+    def console() :
+        """
+        console 
+        """
+        pass
+
+def get() :
+    return getUtility(IMainWin)

@@ -23,6 +23,9 @@ class CtApp(QApplication):
         asyncio.set_event_loop(self.loop)
 
         self.scheduler = QtScheduler(QtCore)
+
+    def app(self):
+        return self
         
     def asyncio_loop(self):
         return self.loop

@@ -26,3 +26,6 @@ datetime
 
 # fp
 first
+
+# console
+qtconsole

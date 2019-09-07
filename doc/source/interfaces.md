@@ -8,7 +8,9 @@
    ./apis/mainwin.md
    ./apis/console.md
    ./apis/actmgr.md
+   ./apis/dataset.md
    ./apis/recent.md
    ./apis/util.md
    ./apis/core.md
+   ./apis/traits.md
 ```

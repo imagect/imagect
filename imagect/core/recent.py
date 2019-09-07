@@ -12,7 +12,6 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtCore import QObject
 
 import imagect.api.actmgr
-import imagect.core.actmgr
 import imagect.api.app as app
 from imagect.api.actmgr import addActFetch, addActFun, renameAct
 from imagect.api.recent import IRecent
@@ -102,15 +101,15 @@ def recentMenu(qact : QObject):
     return [QAction(f, qact) for f in files]
 
 g = 0
-@addActFun("test.recent.add", "Add Recent File", index =1, shortcut="F2")
+@addActFun("help.recent.add", "Add Recent File", index =1, shortcut="F2")
 def testRecent():
     global g
     filename = "file-{}".format(g)
     g += 1
     recent.get().push(filename)
 
-@addActFun("test.recent.clear", "Clear Recent File", index =1)
+@addActFun("help.recent.clear", "Clear Recent File", index =1)
 def testRecent(index=0):
     recent.get().clear()
 
-renameAct("test.recent", "Recent", index =12)
+renameAct("help.recent", "Recent", index =12)

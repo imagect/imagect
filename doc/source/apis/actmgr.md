@@ -8,7 +8,6 @@ method to add a new menu item
 
 ```python
 import imagect.api.actmgr
-import imagect.core.actmgr
 from imagect.api.actmgr import addAct, addActFun, renameAct
 
 @addActFun("file.exampe.msg", text="&Message", index=1)
@@ -30,7 +29,6 @@ def recentMenu(qact : QAction):
 
 ```python
 import imagect.api.actmgr
-import imagect.core.actmgr
 from imagect.api.actmgr import addActWdg, renameAct
 
 @addActWdg("file.exampe.wdg", text="Show Widget", index = 3)
@@ -48,11 +46,3 @@ class ActWdg(QSpinBox) :
    :show-inheritance:
 ```
 
-## IMPL
-
-```eval_rst
-.. automodule:: imagect.core.actmgr
-   :members:
-   :undoc-members:
-   :show-inheritance:
-```

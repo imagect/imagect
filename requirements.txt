@@ -19,6 +19,12 @@ pyqt5
 rx
 asyncqt
 
+# traits
+traits
+traitsui
+
+matplotlib
+
 # datetime
 pytz
 iso8601

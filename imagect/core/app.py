@@ -7,6 +7,7 @@ from PyQt5.QtCore import QStandardPaths
 from asyncqt import QEventLoop, QThreadExecutor
 import asyncio
 from rx.scheduler.mainloop import QtScheduler
+import imagect.example.mpl
 
 @interface.implementer(IApp)
 class App(QApplication):

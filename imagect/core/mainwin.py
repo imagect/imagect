@@ -1,7 +1,6 @@
 import imagect.api.mainwin
 from imagect.api.mainwin import IMainWin
 import imagect.api.actmgr
-import imagect.core.actmgr
 from imagect.api.actmgr import addAct, addActFun, addActWdg, renameAct
 import imagect.api.app as app
 from zope import interface

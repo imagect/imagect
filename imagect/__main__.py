@@ -4,11 +4,11 @@ from imagect.api.mainwin import IMainWin
 from imagect.core.mainwin import MainWin
 from imagect.api.console import IConsole
 import imagect.core.console
-import imagect.core.actmgr 
 import imagect.api.actmgr 
 from imagect.api.recent import IRecent
 import imagect.core.recent
 from imagect.api.actmgr import IActMgr, toQAction
+import imagect.core.opener.image
 from zope.component import getGlobalSiteManager
 
 def __main__() :

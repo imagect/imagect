@@ -30,12 +30,12 @@ class Console(object) :
 
 
 from imagect.api.actmgr import addActFetch, addActFun, renameAct
-@addActFun("test.console.init", "init console", index =2, shortcut="F5")
+@addActFun("help.console.init", "init console", index =2, shortcut="F5")
 def testRecent():
     get().execute("import imagect.api.util as it")
     
-@addActFun("test.console.welcome", "welcome message", index =1)
+@addActFun("help.console.welcome", "welcome message", index =1)
 def testRecent():
     get().printText("welcome")
 
-renameAct("test.console", "Console", index =11)
+renameAct("help.console", "Console", index =11)

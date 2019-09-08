@@ -26,7 +26,7 @@ class Console(object) :
         """
         execute python statement in console
         """
-        getWin().console()._execute(command,True)
+        getWin().console()._execute(command,False)
 
 
 from imagect.api.actmgr import addActFetch, addActFun, renameAct

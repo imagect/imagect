@@ -1,19 +1,12 @@
-
 from traits.api import *
 from traitsui.api import *
 from traitsui.menu import OKButton, CancelButton
-import numpy as np
-
-class ImageType : 
-    "data type"
-
 
 class RawDataSet(HasTraits):
 
     """
     DataSet
     """
-    id = UUID()
 
     width = Int()
     
@@ -23,11 +16,8 @@ class RawDataSet(HasTraits):
 
     margin = Int()
 
-    data = Instance(np.ndarray)
-
     traits_view = View(
             VGroup(
-                Item(name="id"),
                 Item(name="width"),
                 Item(name="height"),
                 Item(name="offset"),
@@ -41,6 +31,15 @@ class RawDataSet(HasTraits):
             title = "Dataset Property"
     )
 
-if __name__ == "__main__":
+def showUi() :
     ds = RawDataSet()
     ds.configure_traits(kind="live")
+
+
+# add to menu
+from imagect.api.actmgr import addActFun, renameAct
+addActFun("help.example.traits", "Truits", index =1)(showUi)
+renameAct("help.example", "Example")
+
+if __name__ == "__main__":
+    showUi()

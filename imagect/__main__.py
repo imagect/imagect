@@ -11,6 +11,8 @@ from imagect.api.actmgr import IActMgr, toQAction
 import imagect.core.opener.image
 from zope.component import getGlobalSiteManager
 
+import imagect.example
+
 def __main__() :
     gsm = getGlobalSiteManager()
 

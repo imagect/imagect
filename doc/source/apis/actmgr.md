@@ -10,7 +10,7 @@ method to add a new menu item
 import imagect.api.actmgr
 from imagect.api.actmgr import addAct, addActFun, renameAct
 
-@addActFun("file.exampe.msg", text="&Message", index=1)
+@addActFun("file.exampe.msg", text="&Message", index=1, shortcut="F5")
 def apptest():
     win = get()
     win.showMessage("Test Message")

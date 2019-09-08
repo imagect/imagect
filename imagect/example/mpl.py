@@ -71,7 +71,7 @@ def exampleMPL() :
 
 # add to menu
 from imagect.api.actmgr import addActFun, renameAct
-addActFun("help.example.matplotlib", "Matplotlib", index =1)(exampleMPL)
+addActFun("help.example.matplotlib", "Matplotlib", index =1, shortcut="F3")(exampleMPL)
 renameAct("help.example", "Example")
 
 if __name__ == "__main__" :

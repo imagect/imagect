@@ -32,7 +32,7 @@ class CodeEditorDemo(HasTraits):
 
     # Define a trait to view:
     code_sample = Code(
-        """ %matplotlib
+        """%matplotlib
 import imagect.api.util as iu
 from matplotlib import pyplot as plt
 import numpy as np
@@ -61,7 +61,7 @@ def showCoder() :
 
 # add to menu
 from imagect.api.actmgr import addActFun, renameAct
-addActFun("help.example.coder", "Coder", index =1)(showCoder)
+addActFun("help.example.coder", "Coder", index =1, shortcut="F5")(showCoder)
 renameAct("help.example", "Example")
 
 if __name__ == "__main__" :

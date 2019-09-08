@@ -43,7 +43,7 @@ class Gray2dImageReader(HasTraits) :
         pass
 
 
-@addActFun("help.traits.traitui", "show trait ui", index =1, shortcut="Ctrl+1")
+@addActFun("help.traits.traitui", "show trait ui", index =1, shortcut="F4")
 def testRecent(index=0):
     reader = Gray2dImageReader()     
     reader.configure_traits()

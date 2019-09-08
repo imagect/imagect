@@ -20,17 +20,22 @@ class Console(object) :
         """
         show text in console
         """
-        getWin().console()._append_plain_text(text)
+        s = "print({})".format(text)
+        self.execute(s)        
 
     def execute(self, command) :
         """
         execute python statement in console
         """
-        getWin().console()._execute(command,False)
+        import PyQt5.QtWidgets 
+        PyQt5.QtWidgets.QApplication.clipboard().setText(command)
+        getWin().console().paste()
+        # getWin().console()._append_plain_text(command)
+        getWin().console().execute(source=command)
 
 
 from imagect.api.actmgr import addActFetch, addActFun, renameAct
-@addActFun("help.console.init", "init console", index =2, shortcut="F5")
+@addActFun("help.console.init", "init console", index =2, shortcut="F1")
 def testRecent():
     get().execute("import imagect.api.util as it")
     

@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\tony\\AppData\\Local\\Programs\\Python\\Python37\\python.exe",
+    "python.pythonPath": "venv\\Scripts\\python.exe",
     "restructuredtext.confPath": "${workspaceFolder}/doc/source",
     "terminal.integrated.env.linux": {
         "PYTHONPATH" : "${workspaceFolder}:${PYTHONPATH}"

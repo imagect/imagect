@@ -215,14 +215,10 @@ class MainWin(QMainWindow):
 
         self.tbar = self.addToolBar("Picker")
 
-        self.lineAct = self.tbar.addAction("Line")
+        self.lineAct = self.tbar.addAction("Rect")
         self.lineAct.toggled.connect(self.lineRoi)
 
-        self.rectAct = self.tbar.addAction("Rect")
-
-        self.lineSegAct = self.tbar.addAction("Seg")
-
-        self.acts = [self.lineAct, self.rectAct, self.lineAct]
+        self.acts = [self.lineAct]
 
         for act in self.acts :
             act.setCheckable(True)
@@ -244,6 +240,11 @@ class MainWin(QMainWindow):
 
         self.currentPicker = None
 
+        def handle():
+            self.show()
+
+        self.cb = handle
+
     
     def on_picker_ev(self, cmd) :
         if cmd.code == CommandCode.End :
@@ -264,15 +265,19 @@ class MainWin(QMainWindow):
             self.currentPicker = self.linePicker
             self.currentPicker.start(self.picker, self.imv.scene)
 
+def showui() :
+    w = MainWin()
+    w.resize(1000, 800)
+    w.show()
+
+# add to menu
+from imagect.api.actmgr import addActFun, renameAct
+addActFun("help.example.picker", "Picker", index =1, shortcut="F8")(showui) 
 
 if __name__ == "__main__" :
 
     app = QApplication([])
 
-    win = MainWin()
-
-    win.resize(1000, 800)
-
-    win.show()
+    showui()
 
     app.exec()

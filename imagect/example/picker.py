@@ -14,6 +14,8 @@ from rx import operators as ops
 from rx.subject import Subject
 from enum import Enum
 
+from imagect.api.dataset import RawDataSet
+
 class CommandCode(Enum):
 
     Begin = 1
@@ -231,7 +233,10 @@ class MainWin(QMainWindow):
 
         from matplotlib.image import imread
         import os.path 
-        self.data = imread(os.path.join(os.path.dirname(__file__), "ct.png"))
+        self.rawdata = RawDataSet(fakedata=True)
+        # self.data = imread(os.path.join(os.path.dirname(__file__), "ct.png"))
+        self.data = self.rawdata.getStack(50)
+
         self.imv.setImage(self.data)
 
         self.setCentralWidget(self.imv)

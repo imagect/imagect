@@ -74,12 +74,11 @@ if __name__ == "__main__" :
         progress.show()
     
         close = loop.create_future()
-    
+    # TODO 多线程执行的例子
         async def master():
             await first_50()
             with QThreadExecutor(1) as exec:
                 await loop.run_in_executor(exec, last_50)
-            # TODO announce completion?
             await close
     
         async def first_50():

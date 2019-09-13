@@ -37,6 +37,8 @@ def __main__() :
     for act in topacts:
         menubar.addMenu(toQAction(act, menubar).menu())
 
+    console.execute("import imagect.api.util as iu")
+
     application.exec()
 
 if __name__ == "__main__" :

@@ -2,7 +2,7 @@ from traits.api import *
 from traitsui.api import *
 from traitsui.menu import OKButton, CancelButton
 
-class RawDataSet(HasTraits):
+class DataSet(HasTraits):
 
     """
     DataSet
@@ -48,7 +48,7 @@ class RawDataSet(HasTraits):
     )
 
 def showUi() :
-    ds = RawDataSet()
+    ds = DataSet()
     ds.configure_traits(kind="live")
     print(ds)
 

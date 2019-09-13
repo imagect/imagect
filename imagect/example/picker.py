@@ -13,8 +13,10 @@ import rx
 from rx import operators as ops
 from rx.subject import Subject
 from enum import Enum
+import numpy as np
 
-from imagect.api.dataset import RawDataSet
+from imagect.api.dataset import DataSet
+import imagect.api.dataset
 
 class CommandCode(Enum):
 
@@ -200,7 +202,7 @@ class LinePicker(object) :
             # self.scene.removeItem(self.drawer)
             # del self.drawer
             # self.drawer= None
-        pass
+        self.stop()
 
     def on_error(self):
         pass
@@ -233,7 +235,8 @@ class MainWin(QMainWindow):
 
         from matplotlib.image import imread
         import os.path 
-        self.rawdata = RawDataSet(fakedata=True)
+        self.rawdata = imagect.api.dataset.DataSet.sample().astype(np.float32)
+        imagect.api.dataset.get().add(self.rawdata)
         # self.data = imread(os.path.join(os.path.dirname(__file__), "ct.png"))
         self.data = self.rawdata.getStack(50)
 

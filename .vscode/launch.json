@@ -8,7 +8,7 @@
             "name": "imagect main",
             "type": "python",
             "request": "launch",
-            "console": "externalTerminal",
+            "console": "integratedTerminal",
             "module": "imagect"
         },
         {

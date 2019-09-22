@@ -10,7 +10,8 @@ from zope.component import getUtility
 # TODO dataset input
 # TODO dataset management
 # TODO add datameta for dataset, describe source and reader
-# class DataMeta(HasTraits) :
+
+class DataMeta(HasTraits) :
 
 #     path = String()
 #     class Category(Enum) :
@@ -18,8 +19,8 @@ from zope.component import getUtility
 #         GRAY = 2
 #         VOL  = 3
 
-#     category = Int()
-#     reader = String()
+     category = Int()
+     reader = String()
 
 class DataSet(HasTraits):
 

@@ -18,6 +18,7 @@ zope.component
 pyqt5
 rx
 asyncqt
+PyQtWebKit
 
 # traits
 traits

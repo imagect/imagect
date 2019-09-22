@@ -1,4 +1,7 @@
 
+from zope.interface import implementer
+from zope.component import getGlobalSiteManager
+from collections import defaultdict
 from traits.api import *
 from traitsui.api import *
 from traitsui.menu import OKButton, CancelButton
@@ -11,16 +14,13 @@ from zope.component import getUtility
 # TODO dataset management
 # TODO add datameta for dataset, describe source and reader
 
-class DataMeta(HasTraits) :
+sampleId = "784c59df-acb8-4d4e-b2e5-fa926264c79e"
 
-#     path = String()
-#     class Category(Enum) :
-#         RGB  = 1
-#         GRAY = 2
-#         VOL  = 3
+class DataMeta(HasTraits):
+    path = String()
+    category = Int()
+    reader = String()
 
-     category = Int()
-     reader = String()
 
 class DataSet(HasTraits):
 
@@ -43,7 +43,7 @@ class DataSet(HasTraits):
         np.float64
     ])
 
-    meta = DataMeta()
+    meta = Instance(DataMeta)
 
     dtype = Property()
 
@@ -110,7 +110,7 @@ class DataSet(HasTraits):
         return s
 
     traits_view = View(
-        VGroup(
+        Group(
             Item(name="id"),
             Item(name="dtype"),
             Item(name="shape"),
@@ -118,7 +118,8 @@ class DataSet(HasTraits):
             Item(name="height"),
             Item(name="width"),
             Item(name="channel"),
-            label="DataSet Property",
+            Item(name="meta", editor=InstanceEditor(), style='custom',),
+            label="Property",
             show_border=True
         ),
         buttons=[OKButton, CancelButton],
@@ -139,8 +140,8 @@ class DataSet(HasTraits):
     @staticmethod
     def fromRGB(data):
         assert len(data.shape) == 3
-        h,w,c = data.shape
-        d = data.reshape((1,h,w,c))
+        h, w, c = data.shape
+        d = data.reshape((1, h, w, c))
         ds = DataSet()
         ds.data = d
         return ds
@@ -148,14 +149,14 @@ class DataSet(HasTraits):
     @staticmethod
     def fromGray(data):
         assert len(data.shape) == 3
-        h,w = data.shape
-        d = data.reshape((1,h,w,1))
+        h, w = data.shape
+        d = data.reshape((1, h, w, 1))
         ds = DataSet()
         ds.data = d
         return ds
 
     @staticmethod
-    def sample(name="vol"):
+    def fromSample(name="vol"):
         create = {
             "vol": dsample.vol,
             "hydrogen": dsample.hydrogen
@@ -165,25 +166,25 @@ class DataSet(HasTraits):
         else:
             return DataSet.fromVol(dsample.vol())
 
-class IDataMgr(Interface) :
+class IDataMgr(Interface):
 
     """
     DataMngr
     """
 
-    def get(id : str) -> DataSet :
+    def get(id: str) -> DataSet:
         """
         fetch data by id
         """
-        pass 
+        pass
 
-    def add(ds : DataSet) :
+    def add(ds: DataSet):
         """
         fetch 
         """
         pass
 
-    def remove(id : str) :
+    def remove(id: str):
         """
         remove
         """
@@ -195,13 +196,19 @@ class IDataMgr(Interface) :
         """
         pass
 
-def get() :
-    return getUtility(IDataMgr) 
 
-#TODO data manager
-from zope.interface import implementer 
-from collections import defaultdict
+def get():
+    return getUtility(IDataMgr)
 
+def sample() :
+    mgr = get()
+    data = mgr.get(sampleId)
+    if data is None :
+        data = DataSet.fromSample()
+        mgr.add(data)
+    return data
+
+# TODO data manager
 @implementer(IDataMgr)
 class DataMgr(HasTraits):
 
@@ -209,22 +216,22 @@ class DataMgr(HasTraits):
     data manager
     """
 
-    datas = Dict() #key_trait=UUID, value_trait=DataSet)
+    datas = Dict()  # key_trait=UUID, value_trait=DataSet)
 
-    def get(self, id : str) :
-        if id in self.datas :
-            return self.datas[id] 
-        else :
+    def get(self, id: str):
+        if id in self.datas:
+            return self.datas[id]
+        else:
             return None
 
     def add(self, ds):
-        if ds.id in self.datas :
-            assert False 
-        self.datas[ds.id] = ds 
+        if ds.id in self.datas:
+            assert False
+        self.datas[ds.id] = ds
 
-    def remove(self, id : str):
-        if id in self.datas :
-            del self.datas[id] 
+    def remove(self, id: str):
+        if id in self.datas:
+            del self.datas[id]
 
     def queryAll(self):
         """
@@ -233,17 +240,15 @@ class DataMgr(HasTraits):
         return [k for k in self.datas.keys()]
 
 
-from zope.component import getGlobalSiteManager
 gsm = getGlobalSiteManager()
 try:
     mgr = get()
 except:
-    mgr = DataMgr()    
+    mgr = DataMgr()
     gsm.registerUtility(mgr, IDataMgr)
-    
+
 
 if __name__ == "__main__":
     ds = DataSet(fakedata=True)
-    ds.configure_traits(kind="live")
-    mgr.configure_traits(kind="live")
-
+    ds.meta = DataMeta()
+    ds.configure_traits()

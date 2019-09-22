@@ -9,6 +9,7 @@ from imagect.api.recent import IRecent
 import imagect.core.recent
 from imagect.api.actmgr import IActMgr, toQAction
 import imagect.core.opener.image
+import imagect.core.opener.opener
 from zope.component import getGlobalSiteManager
 
 import imagect.example

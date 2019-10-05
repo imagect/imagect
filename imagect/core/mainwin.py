@@ -48,6 +48,7 @@ class MainWin(QMainWindow) :
         self.statusBar()
         self.toolBarFile = QToolBar(self)
         self.addToolBar(self.toolBarFile)
+        self.resize(1200, 800)
 
     def window(self):
         return self

@@ -11,7 +11,9 @@ class Opener(object) :
 
 # add to menu
 from imagect.api.actmgr import addActFun, renameAct
-@addActFun("file.new.vol", "Image", index =1, shortcut="F12")
+@addActFun("file.new.sample", "Sample", index =1, shortcut="F12")
 def newimage() :
     sample = ds.DataSet.fromSample().astype(np.float32)
     ds.get().add(sample)
+
+

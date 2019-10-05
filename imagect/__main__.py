@@ -8,8 +8,11 @@ import imagect.api.actmgr
 from imagect.api.recent import IRecent
 import imagect.core.recent
 from imagect.api.actmgr import IActMgr, toQAction
+from imagect.api.viewmgr import ISessionMgr
+import imagect.core.viewmgr
 import imagect.core.opener.image
 import imagect.core.opener.opener
+import imagect.core.opener.vol
 from zope.component import getGlobalSiteManager
 
 import imagect.example
@@ -30,6 +33,9 @@ def __main__() :
 
     console = imagect.core.console.Console()
     gsm.registerUtility(console, IConsole)
+
+    vmgr = imagect.core.viewmgr.SessionMgr()
+    gsm.registerUtility(vmgr, ISessionMgr)
 
     win.show()
 

@@ -18,8 +18,8 @@ sampleId = "784c59df-acb8-4d4e-b2e5-fa926264c79e"
 
 class DataMeta(HasTraits):
     path = String()
-    category = Int()
-    reader = String()
+    category = String()
+    reader = Type()
 
 
 class DataSet(HasTraits):
@@ -60,6 +60,8 @@ class DataSet(HasTraits):
     data = Instance(np.ndarray, transient=True)
 
     def __init__(self, fakedata=False):
+
+        self.meta = DataMeta()
 
         if fakedata:
             data = dsample.vol()
@@ -135,6 +137,10 @@ class DataSet(HasTraits):
         d = data.reshape((s, w, h, 1))
         ds = DataSet()
         ds.data = d
+
+        meta = DataMeta()
+        meta.category = "vol"
+        ds.meta = meta
         return ds
 
     @staticmethod
@@ -144,6 +150,10 @@ class DataSet(HasTraits):
         d = data.reshape((1, h, w, c))
         ds = DataSet()
         ds.data = d
+        
+        meta = DataMeta()
+        meta.category = "rgb"
+        ds.meta = meta
         return ds
 
     @staticmethod
@@ -152,7 +162,11 @@ class DataSet(HasTraits):
         h, w = data.shape
         d = data.reshape((1, h, w, 1))
         ds = DataSet()
-        ds.data = d
+        ds.data = d        
+        
+        meta = DataMeta()
+        meta.category = "gray"
+        ds.meta = meta
         return ds
 
     @staticmethod

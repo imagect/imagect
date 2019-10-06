@@ -23,14 +23,14 @@ def smooth(data, p) :
 
 
 @image.proc_with_para("image.Median", "median", index =1)
-def smooth(data) :
+def median(data) :
     return filters.median(data, disk(1))   
 
 class RestorationPara(HasTraits):
     weight = Float(0.1)
 
 @image.proc_with_para("image.Restoration", "Restoration", para=RestorationPara, index =1)
-def smooth(data, p) :
+def denoise_tv_chambolle(data, p) :
     return restoration.denoise_tv_chambolle(data, weight=p.weight)   
 
  

@@ -1,15 +1,18 @@
 
 import imagect.api.viewmgr
-from imagect.api.viewmgr import ISessionMgr, Session
+from imagect.api.viewmgr import ISessionMgr, View, Session
 from zope import interface
 from . import view
-from traits.api import HasTraits, List
-from traitsui.api import *
+from traits.api import HasTraits, List, Instance
+import numpy as np
 
 @interface.implementer(ISessionMgr)
 class SessionMgr(HasTraits):
 
     sess = List(Session)
+    current = Instance(Session)
+    currentStack = Instance(np.ndarray)
+    currentView = Instance(View)
 
     def __init__(self) :
         pass
@@ -20,21 +23,34 @@ class SessionMgr(HasTraits):
         s.data = ds
 
         v = view.SliceView()
-        v.setImageData( ds.getStack(int(ds.stack/2)))
+
+        self.currentStack = ds.getStack(int(ds.stack/2))
+        v.setImageData( self.currentStack )
 
         s.views.append(v)
         v.show()
 
+        self.current = s
+        self.currentView = v
         self.sess.append(s)
 
     def currentView(self)  :
-        pass
+        if self.current :
+            return self.currentView
+        return None
+
+    def currentStack(self):
+        if self.current :
+            return self.currentStack
+        return None
 
     def currentDataSet(self)  :
-        pass 
+        if self.current :
+            return self.current.data 
+        return None
 
     def currentSession(self)  :
-        pass
+        return self.current
 
     def resetCurrentView(self,v) :
         """

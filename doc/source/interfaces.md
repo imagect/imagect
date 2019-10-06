@@ -10,7 +10,7 @@
    ./apis/actmgr.md
    ./apis/dataset.md
    ./apis/recent.md
+   ./apis/viewmgr.md
    ./apis/util.md
    ./apis/core.md
-   ./apis/traits.md
 ```

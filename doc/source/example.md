@@ -6,4 +6,5 @@
    :maxdepth: 3
 
    ./examples/qt.md
+   ./examples/traits.md
 ```

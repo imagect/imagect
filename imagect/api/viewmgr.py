@@ -45,6 +45,9 @@ class ISessionMgr(Interface) :
     def currentSession() -> Session :
         pass
 
+    def currentStack() :
+        pass
+
     def resetCurrentView(v) :
         """
         用户界面操作，点击后重置当前窗口，根据当前窗口更新界面显示信息

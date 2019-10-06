@@ -15,3 +15,9 @@
 ```
 
 ## rxqt
+
+## icon
+
+图标放于 imagect/resource目录中
+
+icon = imagect.icon("console.png")

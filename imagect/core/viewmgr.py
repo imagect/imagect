@@ -11,8 +11,8 @@ class SessionMgr(HasTraits):
 
     sess = List(Session)
     current = Instance(Session)
-    currentStack = Instance(np.ndarray)
-    currentView = Instance(View)
+    current_tack = Instance(np.ndarray)
+    current_view = Instance(View)
 
     def __init__(self) :
         pass
@@ -24,24 +24,24 @@ class SessionMgr(HasTraits):
 
         v = view.SliceView()
 
-        self.currentStack = ds.getStack(int(ds.stack/2))
-        v.setImageData( self.currentStack )
+        self.current_tack = ds.getStack(int(ds.stack/2))
+        v.setImageData( self.current_tack )
 
         s.views.append(v)
         v.show()
 
         self.current = s
-        self.currentView = v
+        self.current_view = v
         self.sess.append(s)
 
     def currentView(self)  :
         if self.current :
-            return self.currentView
+            return self.current_view
         return None
 
     def currentStack(self):
         if self.current :
-            return self.currentStack
+            return self.current_tack
         return None
 
     def currentDataSet(self)  :

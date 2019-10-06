@@ -84,7 +84,7 @@ class VolReader(HasTraits):
 
 import imagect.api.dataset as ds
 from imagect.api.actmgr import addActFun, renameAct
-@addActFun("file.new.vol", "Raw Image", index =1, shortcut="F11")
+@addActFun("file.open.vol", "Raw Image", index =1, shortcut="F11")
 def newimage() :
     sample = VolReader.readFrom(None)
     if sample is None :
@@ -97,7 +97,7 @@ def newimage() :
     sm = vm.get()
     if sm :
         sm.createSession(sample)
-
+renameAct("file.open", "Open")
 
 if __name__ == "__main__":
     # VolReader.read()

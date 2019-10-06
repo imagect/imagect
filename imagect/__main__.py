@@ -13,6 +13,8 @@ import imagect.core.viewmgr
 import imagect.core.opener.image
 import imagect.core.opener.opener
 import imagect.core.opener.vol
+import imagect.core.image.toolbox
+
 from zope.component import getGlobalSiteManager
 
 import imagect.example

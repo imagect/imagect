@@ -173,7 +173,8 @@ class DataSet(HasTraits):
     def fromSample(name="vol"):
         create = {
             "vol": dsample.vol,
-            "hydrogen": dsample.hydrogen
+            "hydrogen": dsample.hydrogen,
+            "chessboard" : dsample.chessboard
         }
         if name in create:
             return DataSet.fromVol(create[name]())

@@ -1,4 +1,6 @@
 import imagect.api.mainwin
+import imagect
+import os.path
 from imagect.api.mainwin import IMainWin
 import imagect.api.actmgr
 from imagect.api.actmgr import addAct, addActFun, addActWdg, renameAct
@@ -42,13 +44,23 @@ class MainWin(QMainWindow) :
         super().__init__(parent=parent, flags=flags)
 
         self._jupyter_widget = make_jupyter_widget_with_kernel()
-        self.setCentralWidget(self._jupyter_widget)
+        # self.setCentralWidget(self._jupyter_widget)
         app.get().aboutToQuit.connect(self.shutdown_kernel)
 
         self.statusBar()
         self.toolBarFile = QToolBar(self)
+        
+        def showjw() :
+            if not self._jupyter_widget.isVisible() :
+                self._jupyter_widget.show()
+            else:
+                self._jupyter_widget.hide()
+
+        ctb = self.toolBarFile.addAction("Console", showjw)
+        ctb.setIcon(imagect.icon("console.png"))
+        
         self.addToolBar(self.toolBarFile)
-        self.resize(1200, 800)
+        self.resize(1000, 80)
 
     def window(self):
         return self

@@ -39,3 +39,10 @@ def vol() :
     z, y, x = data.shape
     data = data*100000
     return data
+
+def chessboard() :
+    check = np.ones((49,49))
+    check[1::2, ::2] = 0
+    check[::2, 1::2] = 0
+    check = check.reshape((1,49,49))
+    return check

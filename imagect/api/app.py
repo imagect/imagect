@@ -25,6 +25,13 @@ class IApp(interface.Interface) :
         """
         pass
 
+    
+    def rx_threadpool(self):
+        """
+        thread pool scheduler
+        """
+        pass
+
     def showMsg(title : str, msg : str):
         """
         show message box
@@ -46,3 +53,9 @@ class IApp(interface.Interface) :
 
 def get() :
     return getUtility(IApp)
+
+def getLoop() :
+    return get().asyncio_loop()
+
+def getScheduler() :
+    return get().rx_scheduler()

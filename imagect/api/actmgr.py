@@ -206,6 +206,7 @@ def addActFetch(id : str, title : str, index = 0, shortcut=None):
         addAct(a)
     return add
 
+
 from zope.interface import implementer 
 from typing import List
 from PyQt5.QtWidgets import QMenu, QAction

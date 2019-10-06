@@ -59,9 +59,10 @@ class VolReader(HasTraits):
     def readFrom(pro = None):
         if pro is None :
             pro = RawVolMeta()
-        pro.configure_traits(kind="modal")
+        ret = pro.configure_traits(kind="modal")
+        
         pro.print_traits()
-        if pro.path != "":
+        if ret and pro.path != "":
             data = np.memmap(pro.path,
                              dtype=pro.dtype,
                              mode="r",

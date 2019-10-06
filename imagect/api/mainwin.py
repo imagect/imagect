@@ -24,6 +24,11 @@ class IMainWin(interface.Interface) :
         console 
         """
         pass
+    
+    def showMessage(msg) :
+        """
+        show message on status bar
+        """
 
 def get() :
     return getUtility(IMainWin)

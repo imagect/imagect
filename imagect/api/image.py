@@ -77,6 +77,8 @@ def doImageProcInt(proc, ParaKlass) :
            
         class IntHandler(Controller) :
 
+            _changed = False
+
             def setattr(self, info, object, name, value):
                 Handler.setattr(self, info, object, name, value)
                 self.apply(object)
@@ -86,15 +88,20 @@ def doImageProcInt(proc, ParaKlass) :
                     info.ui.title += "*"
 
             def apply(self, o) :
+                self._changed = True
                 procData(o) 
+
+            def closed(self, info, is_ok) :
+                if is_ok :
+                    procData(info.object)
+                else:
+                    if self._changed :
+                        v.setImageData(stack)
       
         mainwin.get().showMessage("Running")
         intpara = ParaKlass()
         intpara.configure_traits(
-            # kind="nonmodal", 
             handler = IntHandler
-                # buttons = [ApplyButton, OKButton, CancelButton],
-            # apply = lambda info : procData(info.object)
         )  
 
     return fun

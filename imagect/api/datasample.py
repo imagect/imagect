@@ -41,8 +41,8 @@ def vol() :
     return data
 
 def chessboard() :
-    check = np.ones((49,49))
+    check = np.ones((49,81))
     check[1::2, ::2] = 0
     check[::2, 1::2] = 0
-    check = check.reshape((1,49,49))
+    check = check.reshape((1,49,81))
     return check

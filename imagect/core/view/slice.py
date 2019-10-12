@@ -1,5 +1,5 @@
 
-from imagect.api.viewmgr import View
+from imagect.api.viewmgr import Viewer
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph as pg
 
@@ -47,7 +47,11 @@ class ImageView3(pg.PlotWidget) :
     def __init__(self, parent=None, background='default', **kargs):
         super().__init__(parent=parent, background=background, **kargs)
         self.plotItem.invertY()
+        def fakeMouseDragEvent(self, ev=None, axis=None) :
+            pass
+        self.plotItem.vb.mouseDragEvent = fakeMouseDragEvent
         self.img = pg.ImageItem()
+        
         self.img.setBorder(10)
         self.addItem(self.img)
 
@@ -64,7 +68,7 @@ class ImageView3(pg.PlotWidget) :
         # self.vb.autoRange()
 
 from . import picker as PK
-class SliceView(View) :
+class SliceView(Viewer) :
 
     def __init__(self):
         super().__init__()
@@ -94,18 +98,18 @@ class SliceView(View) :
 
     def on_picker_ev(self, cmd) :
         if cmd.code == PK.CommandCode.End :
+            if self.currentPicker :
+                self.rois.append(self.currentPicker.drawer)  
+                # print(self.currentPicker.drawer.pos())
+                pos = self.currentPicker.drawer.pos()
+                size = self.currentPicker.drawer.size()
+                p2= pos + size
+                # for p in pos :
+                print(self.view.img.mapFromScene(pos[0], pos[1]))
+                print(self.view.img.mapFromScene(p2[0], p2[1]))
 
-            self.rois.append(self.currentPicker.drawer)  
-            # print(self.currentPicker.drawer.pos())
-            pos = self.currentPicker.drawer.pos()
-            size = self.currentPicker.drawer.size()
-            p2= pos + size
-            # for p in pos :
-            print(self.view.img.mapFromScene(pos[0], pos[1]))
-            print(self.view.img.mapFromScene(p2[0], p2[1]))
-
-            for act in self.acts :
-                act.setChecked(False)
+                for act in self.acts :
+                    act.setChecked(False)
 
 
     def lineRoi(self, checked) :        
@@ -115,6 +119,7 @@ class SliceView(View) :
         """
         if self.currentPicker :
             self.currentPicker.stop()
+            self.currentPicker = None
         
         if checked :
             self.currentPicker = self.linePicker

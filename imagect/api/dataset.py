@@ -30,9 +30,9 @@ class DataSet(HasTraits):
     dtype : numpy.dtype
 
     """
-    id = UUID()
+    did = UUID
 
-    possible_types = List([
+    types = List([
         np.int8,
         np.uint8,
         np.int32,
@@ -43,7 +43,7 @@ class DataSet(HasTraits):
         np.float64
     ])
 
-    meta = Instance(DataMeta)
+    meta = DataMeta()
 
     dtype = Property()
 
@@ -113,7 +113,7 @@ class DataSet(HasTraits):
 
     traits_view = View(
         Group(
-            Item(name="id"),
+            Item(name="did"),
             Item(name="dtype"),
             Item(name="shape"),
             Item(name="stack"),
@@ -240,9 +240,9 @@ class DataMgr(HasTraits):
             return None
 
     def add(self, ds):
-        if ds.id in self.datas:
+        if ds.did in self.datas:
             assert False
-        self.datas[ds.id] = ds
+        self.datas[ds.did] = ds
 
     def remove(self, id: str):
         if id in self.datas:
@@ -265,5 +265,5 @@ except:
 
 if __name__ == "__main__":
     ds = DataSet(fakedata=True)
-    ds.meta = DataMeta()
+    #ds.meta = DataMeta()
     ds.configure_traits()

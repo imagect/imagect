@@ -4,6 +4,7 @@ from imagect.api.viewmgr import ISessionMgr, View, Session
 from zope import interface
 from . import view
 from traits.api import HasTraits, List, Instance
+from traitsui.api import View, Item, OKButton, CancelButton, InstanceEditor
 import numpy as np
 
 @interface.implementer(ISessionMgr)
@@ -12,17 +13,28 @@ class SessionMgr(HasTraits):
     sess = List(Session)
     current = Instance(Session)
     current_tack = Instance(np.ndarray)
-    current_view = Instance(View)
+    current_view = Instance(object)
+
+    traits_view = View(
+        Item(name="sess"),
+        Item(name="current", editor=InstanceEditor(), style='custom',),
+        buttons=[OKButton, CancelButton],
+        #statusbar = [StatusItem(name="title")],
+        dock="vertical",
+        title="Session"
+    )
 
     def __init__(self) :
         pass
 
     def createSession(self, ds) :
 
-        s = Session()
+        s = Session()        
         s.data = ds
 
         v = view.SliceView()
+        v.did = ds.did 
+        v.sid = s.sid
 
         self.current_tack = ds.getStack(int(ds.stack/2))
         v.setImageData( self.current_tack )

@@ -6,7 +6,7 @@ from traits.api import Instance, List, HasTraits, UUID, Property
 from traitsui.api import *
 from imagect.api.dataset import DataSet
 from pyqtgraph.Qt import QtCore, QtGui
-
+import numpy as np
 
 class Viewer(QtGui.QMainWindow) :
     """
@@ -18,6 +18,8 @@ class Viewer(QtGui.QMainWindow) :
     sid = UUID 
 
     vid = UUID
+
+    slice_data = Instance(np.ndarray)
     
     pass
 
@@ -30,7 +32,7 @@ class Session(HasTraits):
 
     data = DataSet()
 
-    views = List(Viewer)
+    # views = List(Viewer)
 
     # traits_view = View(
     #     Item(name="views"),
@@ -42,6 +44,7 @@ class Session(HasTraits):
     # )
     def __init__(self) :
         super().__init__()
+        self.views = []
         
 
     def _get_did(self) :
@@ -57,6 +60,18 @@ class ISessionMgr(Interface) :
     """
     def createSession(ds) :
         pass
+
+    def insertVolSession(ds) :
+        pass
+
+    def setCurrent(sid, vid) :
+        pass
+
+    def getCurrent():
+        """
+        return (sid, vid)
+        """
+        pass 
 
     def currentView() -> View :
         pass
@@ -75,6 +90,23 @@ class ISessionMgr(Interface) :
         用户界面操作，点击后重置当前窗口，根据当前窗口更新界面显示信息
         """
         pass
+
+    def insert(s) -> bool :
+        """
+        insert session
+        """
+        pass
+
+    def getSession(sid) -> Session :
+        pass
+
+    def getView(sid, vid) -> Viewer :
+        pass
+
+    def getDataset(sid) -> DataSet :
+        pass 
+
+    
 
 from zope.component import getUtility
 def get():

@@ -97,7 +97,8 @@ def newimage() :
 
     sm = vm.get()
     if sm :
-        sm.createSession(sample)
+        sm.insertVolSession(sample)
+
 renameAct("file.open", "Open")
 
 if __name__ == "__main__":

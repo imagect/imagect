@@ -67,7 +67,7 @@ class ImageView3(pg.PlotWidget) :
         self.img.setImage(data)
         # self.vb.autoRange()
 
-from . import picker as PK
+import imagect.core.view.picker as PK
 class SliceView(Viewer) :
 
     def __init__(self):
@@ -89,7 +89,7 @@ class SliceView(Viewer) :
 
         self.picker = PK.Picker()
         self.picker.listenTo(self.view.plotItem.scene())
-        self.picker.mouse.subscribe(self.on_picker_ev)
+        self.picker.subpicker_ev.subscribe(self.on_picker_ev)
 
         self.linePicker = PK.LinePicker()
         self.currentPicker = None
@@ -107,6 +107,10 @@ class SliceView(Viewer) :
                 # for p in pos :
                 print(self.view.img.mapFromScene(pos[0], pos[1]))
                 print(self.view.img.mapFromScene(p2[0], p2[1]))
+                
+                self.rois.append(self.currentPicker.drawer)
+
+                self.currentPicker = None
 
                 for act in self.acts :
                     act.setChecked(False)
@@ -127,6 +131,24 @@ class SliceView(Viewer) :
 
 
     def setImageData(self, data):
-        self.data = data
+        self.slice_data = data
         self.view.setImage(data)
+
+if __name__ == "__main__" :
+    from PyQt5.QtWidgets import QApplication
+    import imagect.api.dataset as ds
+    import numpy as np
+    app = QApplication([])
+
+    dm = ds.get()
+    sample = ds.DataSet.fromSample("chessboard").astype(np.float32)
+    v = SliceView()
+    v.did = sample.did
+    v.sid = sample.did 
+    v.setImageData(sample.getStack(int(sample.stack/2)))
+    v.show()
+
+    app.exec()
+    
+
 

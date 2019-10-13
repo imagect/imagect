@@ -24,6 +24,13 @@ class CommandCode(Enum):
     Move = 3
     Remove = 4 
     End = 5
+    Noop = 6
+
+class PickerEvent(object) :
+
+    def __init__(self) :
+        self.picker = None 
+        self.code = CommandCode.Noop
 
 class Button(Enum) :
 
@@ -117,31 +124,34 @@ class Picker(QObject):
     def __init__(self) :
         QObject.__init__(self)
         self.machine = PickerMachine()
-        self.mouse = Subject()
-        self.mouseev = Subject()
+        self.mouse_cmd = Subject()
+        self.mouse_ev = Subject()
+        self.subpicker_ev = Subject()
         self.target = None
-        self.cross = CrosshairROI()
-        self.cross.setSize(10)
 
     def listenTo(self, scene):
         self.target  = scene
         scene.installEventFilter(self)
         # self.cross.set
+        self.cross = CrosshairROI()
+        self.cross.setSize(10)
         scene.addItem(self.cross)
 
         def on_next(cmd) :
             self.cross.setPos((cmd.x, cmd.y))
 
-        self.mouse.subscribe(on_next)
+        self.mouse_cmd.subscribe(on_next)
 
     def onMouseEvent(self, me : QEvent) :
 
         cmds = self.machine.transition(me)
 
-        self.mouseev.on_next(me)
-
+        # print("mouse cmd")
         for cmd in cmds :
-            self.mouse.on_next(cmd)
+            self.mouse_cmd.on_next(cmd)
+
+        # print("mouse event")
+        self.mouse_ev.on_next(me)
 
 
     def eventFilter(self, watched, event) :
@@ -164,22 +174,27 @@ class LinePicker(object) :
         self.machine = Pt2Machine()
 
     def start(self, picker, scene) :
-
-        self.dis = picker.mouseev.pipe(
+        self.source = picker
+        self.dis = picker.mouse_ev.pipe(
             ops.flat_map(self.machine.transition)
             ).subscribe(self)
         self.scene = scene
-        self.drawer = LineROI([0, 0], [0.1, 0], 1.0)
 
     def stop(self) :
         
         if self.dis :
+            pe = PickerEvent()
+            pe.picker = self 
+            pe.code = CommandCode.End
+            self.source.subpicker_ev.on_next(pe)
             self.dis.dispose()
-            self.dis = None 
+            self.dis = None             
+            self.drawer = None
 
     def on_next(self, info) :
 
         if info.code == CommandCode.Begin :
+            self.drawer = LineROI([0, 0], [0.1, 0], 1.0)
             self.drawer.setPos([info.x, info.y])
             self.drawer.setSize((0.01,0))
             if self.drawer.scene() == None :
@@ -196,11 +211,6 @@ class LinePicker(object) :
                 self.on_completed()
     
     def on_completed(self):
-
-        # if self.drawer is not None :
-            # self.scene.removeItem(self.drawer)
-            # del self.drawer
-            # self.drawer= None
         self.stop()
 
     def on_error(self):

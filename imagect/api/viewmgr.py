@@ -21,7 +21,9 @@ class Viewer(QtGui.QMainWindow) :
 
     slice_data = Instance(np.ndarray)
     
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setMouseTracking(False)
 
 
 class Session(HasTraits):

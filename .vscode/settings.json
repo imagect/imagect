@@ -1,0 +1,9 @@
+{
+    "python.pythonPath": "venv/bin/python3.7",
+    "terminal.integrated.env.linux" : {
+        "PYTHONPATH" : "${workspaceFolder}:${PYTHONPATH}"
+    },
+    "terminal.integrated.env.windows" : {
+        "PYTHONPATH" : "${workspaceFolder};${PYTHONPATH}"
+    }
+}

@@ -4,7 +4,8 @@ from imagect.api.dataset import DataSet
 from imagect.api.viewmgr import ISessionMgr, Viewer, Session
 from zope import interface
 from . import view
-from traits.api import HasTraits, List, Instance, UUID
+from pyqtgraph.Qt import QtCore, QtGui
+from traits.api import HasTraits, List, Instance, UUID, Property
 from traitsui.api import View, Item, OKButton, CancelButton, InstanceEditor
 import numpy as np
 
@@ -13,8 +14,8 @@ class SessionMgr(HasTraits):
 
     sess = List(Session)
 
-    current_sid = UUID
-    current_vid = UUID
+    current_sid = Property()
+    current_vid = Property()
     current_view = Instance(Viewer)
 
     traits_view = View(
@@ -25,8 +26,37 @@ class SessionMgr(HasTraits):
         title="Session"
     )
 
+    class EventEator(QtCore.QObject):
+        def eventFilter(self, obj, evnt):
+            if isinstance(evnt, (QtGui.QFocusEvent, QtGui.QCloseEvent)):
+                t = self.target(obj)
+                if t is not None:
+                    if isinstance(evnt, QtGui.QCloseEvent):
+                        t = None
+
+                    if isinstance(evnt, QtGui.QFocusEvent) :
+                        if evnt.lostFocus() :
+                            t = None
+                    imagect.api.viewmgr.get().resetCurrentView(t)
+
+            return super().eventFilter(obj,evnt)
+
+        def target(self, obj):
+            if not isinstance(obj, QtGui.QWidget):
+                return None
+
+            pw = obj
+            while pw is not None:
+                if isinstance(pw, Viewer):
+                    return pw
+                pw = pw.parentWidget()
+            return None
+
+
     def __init__(self) :
-        pass
+        super().__init__()
+        self.eator = SessionMgr.EventEator()
+        QtGui.QGuiApplication.instance().installEventFilter(self.eator)
 
     def createSession(self, ds) :
 
@@ -46,13 +76,16 @@ class SessionMgr(HasTraits):
         v.show()
         self.insert(s)
 
+    def _get_current_sid(self) :
+        return self.current_view.sid 
+
+    def _get_current_vid(self) :
+        return self.current_vid.vid
+
     def setCurrent(self, sid, vid) :
         s = self.getSession(sid) 
         v = self.getView(sid, vid)
-        if s :
-            self.current_sid = sid
-        if v :
-            self.current_vid = vid
+        self.resetCurrentView(v)
 
     def getCurrent(self):
         """
@@ -61,8 +94,7 @@ class SessionMgr(HasTraits):
         return (self.current_sid, self.current_vid)
 
     def currentView(self)  :
-        v = self.getView(self.current_sid, self.current_vid)
-        return v
+        return current_view
 
     def currentStack(self):
         v = self.getView(self.current_sid, self.current_vid)
@@ -80,7 +112,9 @@ class SessionMgr(HasTraits):
         """
         用户界面操作，点击后重置当前窗口，根据当前窗口更新界面显示信息
         """
-        pass
+        self.current_view = v
+        if v : 
+            print("current view ={}".format(self.current_sid))
 
     def insert(self, s) :
         res = self.getSession(s.sid)

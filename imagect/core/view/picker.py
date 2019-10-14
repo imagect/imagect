@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QToolBar
 from pyqtgraph import ImageView, ViewBox
-from pyqtgraph import ROI, CrosshairROI, LineROI
+from pyqtgraph import ROI, CrosshairROI, LineROI, RectROI
 from typing import List
 import rx
 from rx import operators as ops
@@ -47,7 +47,7 @@ class CmdInfo(HasTraits) :
 
     x = Float()
 
-    y = Float()
+    y = Float()    
 
 
 class PickerMachine(HasTraits):
@@ -90,28 +90,29 @@ class Pt2Machine(PickerMachine):
 
         cmds = []
 
-        if me.button() == Qt.RightButton:
-            return cmds
-            
-        if me.type() == QEvent.GraphicsSceneMousePress :
-            if self.state == 0 :
+        # if me.button() == Qt.RightButton:
+            # return cmds
+
+        if self.state == 0 :
+            if me.type() == QEvent.GraphicsSceneMousePress :
                 cmds.append(CmdInfo(button=self.button(me), code=CommandCode.Begin, 
                         x=me.scenePos().x(), y=me.scenePos().y()))
                 cmds.append(CmdInfo(button=self.button(me), code=CommandCode.Append, 
                         x=me.scenePos().x(), y=me.scenePos().y()))
                 self.state = 1
-        
-        elif me.type() == QEvent.GraphicsSceneMouseMove :
-            if self.state == 1 :
+        elif self.state == 1 :        
+            if me.type() == QEvent.GraphicsSceneMouseMove :
                 cmds.append(CmdInfo(button=self.button(me), code=CommandCode.Move, 
                         x=me.scenePos().x(), y=me.scenePos().y()))
-
-        elif me.type() == QEvent.GraphicsSceneMouseRelease :
-            if self.state == 1 :
+            elif me.type() == QEvent.GraphicsSceneMouseRelease :
                 cmds.append(CmdInfo(button=self.button(me), code=CommandCode.End, 
                         x=me.scenePos().x(), y=me.scenePos().y()))
                 self.state = 0
+        else :
+            pass
 
+        if len(cmds) > 0 :
+            print(cmds)
         return cmds
 
 
@@ -133,12 +134,13 @@ class Picker(QObject):
         self.target  = scene
         scene.installEventFilter(self)
         # self.cross.set
-        self.cross = CrosshairROI()
-        self.cross.setSize(10)
-        scene.addItem(self.cross)
+        # self.cross = CrosshairROI()
+        # self.cross.setSize(10)
+        # scene.addItem(self.cross)
 
         def on_next(cmd) :
-            self.cross.setPos((cmd.x, cmd.y))
+            # self.cross.setPos((cmd.x, cmd.y))
+            pass
 
         self.mouse_cmd.subscribe(on_next)
 
@@ -146,12 +148,13 @@ class Picker(QObject):
 
         cmds = self.machine.transition(me)
 
+        # print("mouse event")
+        self.mouse_ev.on_next(me)
+
         # print("mouse cmd")
         for cmd in cmds :
             self.mouse_cmd.on_next(cmd)
 
-        # print("mouse event")
-        self.mouse_ev.on_next(me)
 
 
     def eventFilter(self, watched, event) :
@@ -168,7 +171,7 @@ class Picker(QObject):
 
         return False
 
-class LinePicker(object) :
+class RectPicker(object) :
 
     def __init__(self):
         self.machine = Pt2Machine()
@@ -197,8 +200,7 @@ class LinePicker(object) :
             self.drawer = LineROI([0, 0], [0.1, 0], 1.0)
             self.drawer.setPos([info.x, info.y])
             self.drawer.setSize((0.01,0))
-            if self.drawer.scene() == None :
-                self.scene.addItem(self.drawer)
+            self.scene.addItem(self.drawer)
         
         else :
             if info.code == CommandCode.Append or info.code == CommandCode.Move :

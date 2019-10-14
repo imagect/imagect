@@ -50,22 +50,17 @@ class ImageView3(pg.PlotWidget) :
         def fakeMouseDragEvent(self, ev=None, axis=None) :
             pass
         self.plotItem.vb.mouseDragEvent = fakeMouseDragEvent
-        self.img = pg.ImageItem()
-        
+        # self.plotItem.showAxis("top")
+        # self.plotItem.hideAxis("left")
+        # self.plotItem.hideAxis("bottom")
+        self.img = pg.ImageItem() #parent=self.plotItem)        
         self.img.setBorder(10)
         self.addItem(self.img)
 
     
-    def setImage(self, data) :
-        
-        # if len(data.shape) == 2:
-        #     h,w = data.shape
-        #     self.resize(w,h)
-        # if len(data.shape) == 3:
-        #     h,w,c = data.shape
-        #     self.resize(w,h)
+    def setImage(self, data) :        
         self.img.setImage(data)
-        # self.vb.autoRange()
+        pass
 
 import imagect.core.view.picker as PK
 class SliceView(Viewer) :
@@ -91,7 +86,7 @@ class SliceView(Viewer) :
         self.picker.listenTo(self.view.plotItem.scene())
         self.picker.subpicker_ev.subscribe(self.on_picker_ev)
 
-        self.linePicker = PK.LinePicker()
+        self.linePicker = PK.RectPicker()
         self.currentPicker = None
 
         self.rois = []
@@ -141,7 +136,8 @@ if __name__ == "__main__" :
     app = QApplication([])
 
     dm = ds.get()
-    sample = ds.DataSet.fromSample("chessboard").astype(np.float32)
+    # sample = ds.DataSet.fromSample("chessboard").astype(np.float32)
+    sample = ds.DataSet.fromSample("vol").astype(np.float32)
     v = SliceView()
     v.did = sample.did
     v.sid = sample.did 

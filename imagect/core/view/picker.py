@@ -133,13 +133,13 @@ class Picker(QObject):
     def listenTo(self, scene):
         self.target  = scene
         scene.installEventFilter(self)
-        # self.cross.set
-        # self.cross = CrosshairROI()
-        # self.cross.setSize(10)
-        # scene.addItem(self.cross)
+        
+        self.cross = CrosshairROI()
+        self.cross.setSize(10)
+        scene.addItem(self.cross)
 
         def on_next(cmd) :
-            # self.cross.setPos((cmd.x, cmd.y))
+            self.cross.setPos((cmd.x, cmd.y))
             pass
 
         self.mouse_cmd.subscribe(on_next)

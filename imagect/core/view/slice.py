@@ -46,13 +46,13 @@ class ImageView2(pg.ImageView) :
 class ImageView3(pg.PlotWidget) :
     def __init__(self, parent=None, background='default', **kargs):
         super().__init__(parent=parent, background=background, **kargs)
-        self.plotItem.invertY()
         def fakeMouseDragEvent(self, ev=None, axis=None) :
             pass
         self.plotItem.vb.mouseDragEvent = fakeMouseDragEvent
-        # self.plotItem.showAxis("top")
+        self.plotItem.invertY()
+        self.plotItem.showAxis("top")
         # self.plotItem.hideAxis("left")
-        # self.plotItem.hideAxis("bottom")
+        self.plotItem.hideAxis("bottom")
         self.img = pg.ImageItem() #parent=self.plotItem)        
         self.img.setBorder(10)
         self.addItem(self.img)

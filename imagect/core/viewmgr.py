@@ -12,8 +12,6 @@ import numpy as np
 @interface.implementer(ISessionMgr)
 class SessionMgr(HasTraits):
 
-    sess = List(Session)
-
     current_sid = Property()
     current_vid = Property()
     current_view = Instance(Viewer)
@@ -32,12 +30,11 @@ class SessionMgr(HasTraits):
                 t = self.target(obj)
                 if t is not None:
                     if isinstance(evnt, QtGui.QCloseEvent):
-                        t = None
+                        imagect.api.viewmgr.get().closeView(t.sid, t.vid)
 
                     if isinstance(evnt, QtGui.QFocusEvent) :
-                        if evnt.lostFocus() :
-                            t = None
-                    imagect.api.viewmgr.get().resetCurrentView(t)
+                        if evnt.gotFocus() :
+                            imagect.api.viewmgr.get().resetCurrentView(t)
 
             return super().eventFilter(obj,evnt)
 
@@ -55,8 +52,10 @@ class SessionMgr(HasTraits):
 
     def __init__(self) :
         super().__init__()
+        self.sess = []
         self.eator = SessionMgr.EventEator()
         QtGui.QGuiApplication.instance().installEventFilter(self.eator)
+
 
     def createSession(self, ds) :
 
@@ -68,7 +67,9 @@ class SessionMgr(HasTraits):
         v.did = ds.did 
         v.sid = s.sid
         v.setImageData( ds.getStack(int(ds.stack/2)) )
-        s.views.append(v)
+        s.insert(v)
+        print("view created vid = {}".format(str(v.vid)))
+        print("session created sid={}".format(str(s.sid)))
         return (s,v)
 
     def insertVolSession(self, ds) :
@@ -94,7 +95,7 @@ class SessionMgr(HasTraits):
         return (self.current_sid, self.current_vid)
 
     def currentView(self)  :
-        return current_view
+        return self.current_view
 
     def currentStack(self):
         v = self.getView(self.current_sid, self.current_vid)
@@ -114,7 +115,22 @@ class SessionMgr(HasTraits):
         """
         self.current_view = v
         if v : 
-            print("current view ={}".format(self.current_sid))
+            print("current view ={}".format(v.vid))
+
+    def closeView(self, sid, vid) :
+        s = self.getSession(sid)
+        if not s :
+            return 
+
+        if s :
+            s.remove(vid)
+        if len(s.views) == 0:
+            index = 0
+            while index < len(self.sess) :
+                if self.sess[index].sid == sid :
+                    del(self.sess[index])
+                    print("remove session sid = {}".format(sid))
+                index += 1
 
     def insert(self, s) :
         res = self.getSession(s.sid)
@@ -124,20 +140,19 @@ class SessionMgr(HasTraits):
             self.sess.append(s)
             if len(s.views) > 0:
                 v = s.views[0]
-                self.current_vid = v.vid
-                self.current_sid = s.sid
+                self.current_view = v
             return True
 
 
     def getSession(self, sid) -> Session :
-        res = [filter( lambda s : s.sid == sid, self.sess)]
+        res = list(filter( lambda s : s.sid == sid, self.sess))
         return res[0] if len(res) == 1 else None
 
     def getView(self, sid, vid) -> Viewer :        
-        ss = [filter( lambda s : s.sid == sid, self.sess)]
+        ss = list(filter( lambda s : s.sid == sid, self.sess))
         if len(ss) == 0:
             return None
-        vv = [filter( lambda v : v.vid == vid, ss.views)]
+        vv = list(filter( lambda v : v.vid == vid, ss.views))
         return vv[0] if len(vv) == 1 else None
 
     def getDataset(self, sid) -> DataSet :

@@ -7,23 +7,25 @@ from traitsui.api import *
 from imagect.api.dataset import DataSet
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
+import uuid
 
 class Viewer(QtGui.QMainWindow) :
     """
     sid : sessionid == datasetid
     """
 
-    did = UUID
+    did = UUID()
 
-    sid = UUID 
+    sid = UUID()
 
-    vid = UUID
+    vid = UUID()
 
     slice_data = Instance(np.ndarray)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setMouseTracking(False)
+        self.vid = uuid.uuid4()
 
 
 class Session(HasTraits):
@@ -54,6 +56,20 @@ class Session(HasTraits):
 
     def _get_sid(self) :
         return self.data.did
+
+
+    def remove(self, vid) :
+        index = 0
+        while index < len(self.views) :
+            if self.views[index].vid == vid :
+                del(self.views[index])
+                print("remove viewer vid={}".format(vid))
+            index += 1
+
+    def insert(self, v) :
+        vs = list(filter(lambda o : o.vid == v.vid, self.views))
+        if len(vs) == 0:
+            self.views.append(v)
 
 
 class ISessionMgr(Interface) :

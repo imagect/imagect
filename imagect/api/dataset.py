@@ -9,6 +9,7 @@ import numpy as np
 import imagect.api.datasample as dsample
 from zope.interface import Interface, Attribute
 from zope.component import getUtility
+import uuid
 
 # TODO dataset input
 # TODO dataset management
@@ -30,7 +31,7 @@ class DataSet(HasTraits):
     dtype : numpy.dtype
 
     """
-    did = UUID
+    did = UUID(can_init=True)
 
     types = List([
         np.int8,
@@ -62,6 +63,7 @@ class DataSet(HasTraits):
     def __init__(self, fakedata=False):
 
         self.meta = DataMeta()
+        self.id = uuid.uuid4()
 
         if fakedata:
             data = dsample.vol()

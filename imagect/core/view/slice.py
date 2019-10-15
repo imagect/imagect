@@ -60,7 +60,6 @@ class ImageView3(pg.PlotWidget) :
     
     def setImage(self, data) :        
         self.img.setImage(data)
-        pass
 
 import imagect.core.view.picker as PK
 class SliceView(Viewer) :

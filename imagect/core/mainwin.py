@@ -44,7 +44,7 @@ class MainWin(QMainWindow) :
         super().__init__(parent=parent, flags=flags)
 
         self._jupyter_widget = make_jupyter_widget_with_kernel()
-        # self.setCentralWidget(self._jupyter_widget)
+        self.setCentralWidget(self._jupyter_widget)
         app.get().aboutToQuit.connect(self.shutdown_kernel)
 
         self.statusBar()
@@ -60,7 +60,7 @@ class MainWin(QMainWindow) :
         ctb.setIcon(imagect.icon("console.png"))
         
         self.addToolBar(self.toolBarFile)
-        self.resize(1000, 80)
+        self.resize(600, 600)
 
     def window(self):
         return self

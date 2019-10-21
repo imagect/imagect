@@ -78,10 +78,10 @@ class SessionMgr(HasTraits):
         self.insert(s)
 
     def _get_current_sid(self) :
-        return self.current_view.sid 
+        return self.current_view.sid if self.current_view else None
 
     def _get_current_vid(self) :
-        return self.current_vid.vid
+        return self.current_view.vid if self.current_view else None
 
     def setCurrent(self, sid, vid) :
         s = self.getSession(sid) 
@@ -152,7 +152,7 @@ class SessionMgr(HasTraits):
         ss = list(filter( lambda s : s.sid == sid, self.sess))
         if len(ss) == 0:
             return None
-        vv = list(filter( lambda v : v.vid == vid, ss.views))
+        vv = list(filter( lambda v : v.vid == vid, ss[0].views))
         return vv[0] if len(vv) == 1 else None
 
     def getDataset(self, sid) -> DataSet :

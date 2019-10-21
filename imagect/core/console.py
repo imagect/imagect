@@ -28,17 +28,13 @@ class Console(object) :
         execute python statement in console
         """
         import PyQt5.QtWidgets 
-        PyQt5.QtWidgets.QApplication.clipboard().setText(command)
-        getWin().console().paste()
+        # PyQt5.QtWidgets.QApplication.clipboard().setText(command)
+        # getWin().console().paste()
         # getWin().console()._append_plain_text(command)
         getWin().console().execute(source=command)
 
 
-from imagect.api.actmgr import addActFetch, addActFun, renameAct
-@addActFun("help.console.init", "init console", index =2, shortcut="F1")
-def testRecent():
-    get().execute("import imagect.api.util as it")
-    
+from imagect.api.actmgr import addActFetch, addActFun, renameAct  
 @addActFun("help.console.welcome", "welcome message", index =1)
 def testRecent():
     get().printText("welcome")

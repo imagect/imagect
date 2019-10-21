@@ -176,12 +176,13 @@ class RectPicker(object) :
     def __init__(self):
         self.machine = Pt2Machine()
 
-    def start(self, picker, scene) :
+    def start(self, picker, scene, parent) :
         self.source = picker
         self.dis = picker.mouse_ev.pipe(
             ops.flat_map(self.machine.transition)
             ).subscribe(self)
         self.scene = scene
+        self.parent = parent
 
     def stop(self) :
         
@@ -197,16 +198,24 @@ class RectPicker(object) :
     def on_next(self, info) :
 
         if info.code == CommandCode.Begin :
-            self.drawer = LineROI([0, 0], [0.1, 0], 1.0)
-            self.drawer.setPos([info.x, info.y])
-            self.drawer.setSize((0.01,0))
+            self.drawer = LineROI([0, 0], [0.1, 0], 1.0, 
+                parent = self.parent, 
+                translateSnap=True, 
+                # rotatable=False, 
+                removable=True
+                )
+            self.drawer.setZValue(100.0)
             self.scene.addItem(self.drawer)
+            o = self.parent.mapFromScene(info.x, info.y)
+            self.drawer.setPos(o)
+            self.drawer.setSize((0.01,0))
         
         else :
             if info.code == CommandCode.Append or info.code == CommandCode.Move :
                 pos = self.drawer.pos()
-                dx = info.x - pos.x()
-                dy = info.y - pos.y()
+                o = self.parent.mapFromScene(info.x, info.y)
+                dx = o.x() - pos.x()
+                dy = o.y() - pos.y()
                 self.drawer.setSize((dx,dy))
 
             elif info.code == CommandCode.End :

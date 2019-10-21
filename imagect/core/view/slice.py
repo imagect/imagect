@@ -97,10 +97,9 @@ class SliceView(Viewer) :
                 # print(self.currentPicker.drawer.pos())
                 pos = self.currentPicker.drawer.pos()
                 size = self.currentPicker.drawer.size()
-                p2= pos + size
-                # for p in pos :
-                print(self.view.img.mapFromScene(pos[0], pos[1]))
-                print(self.view.img.mapFromScene(p2[0], p2[1]))
+                p2= pos + size                
+                print((pos[0], pos[1]))
+                print((p2[0], p2[1]))
                 
                 self.rois.append(self.currentPicker.drawer)
 
@@ -121,7 +120,7 @@ class SliceView(Viewer) :
         
         if checked :
             self.currentPicker = self.linePicker
-            self.currentPicker.start(self.picker, self.view.plotItem.scene())
+            self.currentPicker.start(self.picker, self.view.scene(), self.view.img)
 
 
     def setImageData(self, data):

@@ -3,7 +3,7 @@
 from zope.interface import Interface, Attribute
 from zope.component import getUtility
 from traits.api import Instance, List, HasTraits, UUID, Property
-from traitsui.api import *
+# from traitsui.api import *
 from imagect.api.dataset import DataSet
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
@@ -91,7 +91,7 @@ class ISessionMgr(Interface) :
         """
         pass 
 
-    def currentView() -> View :
+    def currentView() -> Viewer :
         pass
 
     def currentDataSet() -> DataSet :

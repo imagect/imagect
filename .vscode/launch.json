@@ -9,14 +9,20 @@
             "type": "python",
             "request": "launch",
             "console": "integratedTerminal",
-            "module": "imagect"
+            "module": "imagect",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/extern/pyqtgraph:${PYTHONPATH}"
+            }
         },
         {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/extern/pyqtgraph:${PYTHONPATH}"
+            }
         }
     ]
 }

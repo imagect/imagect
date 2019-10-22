@@ -1,9 +1,9 @@
 {
     "python.pythonPath": "venv/bin/python",
     "terminal.integrated.env.linux" : {
-        "PYTHONPATH" : "${workspaceFolder}:${PYTHONPATH}"
+        "PYTHONPATH" : "${workspaceFolder}:${workspaceFolder}/extern/pyqtgraph:${PYTHONPATH}"
     },
     "terminal.integrated.env.windows" : {
-        "PYTHONPATH" : "${workspaceFolder};${PYTHONPATH}"
+        "PYTHONPATH" : "${workspaceFolder};${workspaceFolder}/extern/pyqtgraph;${PYTHONPATH}"
     }
 }

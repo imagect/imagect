@@ -5,44 +5,6 @@ import pyqtgraph as pg
 
 pg.setConfigOptions(imageAxisOrder="row-major")
 
-class ImageView(pg.GraphicsView) :
-
-    def __init__(self, parent=None, useOpenGL=None, background='default'):
-        super().__init__(parent=parent, useOpenGL=useOpenGL, background=background)
-
-        self.vb = pg.ViewBox()
-        self.vb.setAspectLocked()
-        self.setCentralItem(self.vb)
-        self.img = pg.ImageItem()
-        self.vb.addItem(self.img)
-    
-    def setImage(self, data) :
-        if len(data.shape) == 2:
-            h,w = data.shape
-            self.resize(w,h)
-        if len(data.shape) == 3:
-            h,w,c = data.shape
-            self.resize(w,h)
-        self.img.setImage(data)
-        self.vb.autoRange()
-        
-
-class ImageView2(pg.ImageView) :
-    def __init__(self, parent=None, name='ImageView', imageItem=None, *args):
-        
-        _vb = pg.ViewBox(enableMouse=False)
-        super().__init__(parent=parent, name=name, view=_vb, imageItem=imageItem, *args)
-        
-        self.ui.roiBtn.hide()
-        self.ui.menuBtn.hide()
-        self.ui.graphicsView.enableMouse(False)
-        self.ui.histogram.hide()
-
-        self.imageItem.setBorder(10)
-
-    def showHist(self) :
-        self.ui.histogram.show()
-
 class ImageView3(pg.PlotWidget) :
     def __init__(self, parent=None, background='default', **kargs):
         super().__init__(parent=parent, background=background, **kargs)
@@ -50,8 +12,8 @@ class ImageView3(pg.PlotWidget) :
             pass
         self.plotItem.vb.mouseDragEvent = fakeMouseDragEvent
         self.plotItem.invertY()
-        self.plotItem.showAxis("top")
-        # self.plotItem.hideAxis("left")
+        # self.plotItem.showAxis("top")
+        self.plotItem.hideAxis("left")
         self.plotItem.hideAxis("bottom")
         self.img = pg.ImageItem() #parent=self.plotItem)        
         self.img.setBorder(10)

@@ -1,12 +1,13 @@
 from traits.api import *
 from traitsui.api import *
 import PyQt5 
-from PyQt5.QtCore import QObject, QEvent, Qt
+from PyQt5.QtCore import QObject, QEvent, Qt, QPointF
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QToolBar
 from pyqtgraph import ImageView, ViewBox
-from pyqtgraph import ROI, CrosshairROI, LineROI, RectROI
+from pyqtgraph import ROI, CrosshairROI
+import pyqtgraph as pg
 from typing import List
 import rx
 from rx import operators as ops
@@ -171,6 +172,28 @@ class Picker(QObject):
 
         return False
 
+
+class RectROI(pg.ROI):
+    r"""
+    Rectangular ROI subclass with a single scale handle at the top-right corner.
+
+    ============== =============================================================
+    **Arguments**
+    pos            (length-2 sequence) The position of the ROI origin.
+                   See ROI().
+    size           (length-2 sequence) The size of the ROI. See ROI().
+    centered       (bool) If True, scale handles affect the ROI relative to its
+                   center, rather than its origin.
+    sideScalers    (bool) If True, extra scale handles are added at the top and 
+                   right edges.
+    \**args        All extra keyword arguments are passed to ROI()
+    ============== =============================================================
+    
+    """
+    def __init__(self, pos, size, **args):
+        pg.ROI.__init__(self, pos, size, **args)            
+        #self.addScaleHandle([1, 1], center)
+
 class RectPicker(object) :
 
     def __init__(self):
@@ -197,31 +220,45 @@ class RectPicker(object) :
 
     def on_next(self, info) :
 
+        o = self.parent.mapFromScene(info.x, info.y)
+
         if info.code == CommandCode.Begin :
-            self.drawer = LineROI([0, 0], [0.1, 0], 1.0, 
+            self.pts_start = o
+            self.drawer = RectROI(self.pts_start, [0, 0], 
                 parent = self.parent, 
                 translateSnap=True, 
                 # rotatable=False, 
-                removable=True
+                movable = False,
+                removable=True,
+                # sideScalers=True,
+                # centered=False
                 )
             self.drawer.setZValue(100.0)
-            self.scene.addItem(self.drawer)
-            o = self.parent.mapFromScene(info.x, info.y)
-            self.drawer.setPos(o)
-            self.drawer.setSize((0.01,0))
-        
+            self.drawer.setPos(self.pts_start)
+       
         else :
             if info.code == CommandCode.Append or info.code == CommandCode.Move :
-                pos = self.drawer.pos()
-                o = self.parent.mapFromScene(info.x, info.y)
-                dx = o.x() - pos.x()
-                dy = o.y() - pos.y()
-                self.drawer.setSize((dx,dy))
+                
+                minx = min(o.x(), self.pts_start.x())
+                miny = min(o.y(), self.pts_start.y())
+                maxx = max(o.x(), self.pts_start.x())
+                maxy = max(o.y(), self.pts_start.y())
+
+                rect_start = QPointF(minx, miny)
+                self.drawer.setPos(rect_start)
+                self.drawer.setSize((maxx-minx,maxy-miny))
 
             elif info.code == CommandCode.End :
                 self.on_completed()
-    
+
+
+
     def on_completed(self):
+        self.drawer.translatable = True
+        center = [0, 0]
+        self.drawer.addScaleHandle([1, 0.5], [center[0], 0.5])
+        self.drawer.addScaleHandle([0.5, 1], [0.5, center[1]])
+
         self.stop()
 
     def on_error(self):

@@ -4,10 +4,13 @@ from imagect.api.dataset import DataSet
 from imagect.api.viewmgr import ISessionMgr, Viewer, Session
 from zope import interface
 from . import view
+import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 from traits.api import HasTraits, List, Instance, UUID, Property
 from traitsui.api import View, Item, OKButton, CancelButton, InstanceEditor
 import numpy as np
+
+pg.setConfigOptions(imageAxisOrder="row-major") 
 
 @interface.implementer(ISessionMgr)
 class SessionMgr(HasTraits):
@@ -63,7 +66,7 @@ class SessionMgr(HasTraits):
         s.data = ds
         
         #todo : create other view according to ds.meta
-        v = view.SliceView()
+        v = view.VolViewer()
         v.did = ds.did 
         v.sid = s.sid
         v.setImageData( ds.getStack(int(ds.stack/2)) )

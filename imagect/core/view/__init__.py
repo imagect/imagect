@@ -1,3 +1,3 @@
-from . import slice 
+from . import VolViewer
 
-SliceView = slice.SliceView
+VolViewer = VolViewer.VolViewer

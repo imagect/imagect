@@ -1,22 +1,29 @@
 from traits.api import *
 from traitsui.api import *
+
 import PyQt5 
+import PyQt5.QtWidgets as QtWidgets
 from PyQt5.QtCore import QObject, QEvent, Qt, QPointF
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
-import PyQt5.QtWidgets as QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QToolBar
+
+import pyqtgraph as pg
 from pyqtgraph import ImageView, ViewBox
 from pyqtgraph import ROI, CrosshairROI
-import pyqtgraph as pg
+
 from typing import List
+
 import rx
 from rx import operators as ops
 from rx.subject import Subject
+
 from enum import Enum
 import numpy as np
 
 from imagect.api.dataset import DataSet
 import imagect.api.dataset
+
+import imagect
 
 class CommandCode(Enum):
 
@@ -172,6 +179,16 @@ class Picker(QObject):
 
         return False
 
+_pickerKlass = {}
+
+def register(cls) :
+    global _pickerKlass
+    _pickerKlass[cls.__name__] = cls
+    return cls
+
+
+def pickers():
+    return _pickerKlass.values()
 
 class RectROI(pg.ROI):
     r"""
@@ -194,18 +211,21 @@ class RectROI(pg.ROI):
         pg.ROI.__init__(self, pos, size, **args)            
         #self.addScaleHandle([1, 1], center)
 
+@register
 class RectPicker(object) :
+
+    icon = imagect.icon("picker_rect.png")
 
     def __init__(self):
         self.machine = Pt2Machine()
 
-    def start(self, picker, scene, parent) :
-        self.source = picker
-        self.dis = picker.mouse_ev.pipe(
+    def start(self, gPicker, target) :
+        self.source = gPicker
+        self.dis = gPicker.mouse_ev.pipe(
             ops.flat_map(self.machine.transition)
             ).subscribe(self)
-        self.scene = scene
-        self.parent = parent
+            
+        self.parentItem = target
 
     def stop(self) :
         
@@ -220,12 +240,12 @@ class RectPicker(object) :
 
     def on_next(self, info) :
 
-        o = self.parent.mapFromScene(info.x, info.y)
+        o = self.parentItem.mapFromScene(info.x, info.y)
 
         if info.code == CommandCode.Begin :
             self.pts_start = o
             self.drawer = RectROI(self.pts_start, [0, 0], 
-                parent = self.parent, 
+                parent = self.parentItem, 
                 translateSnap=True, 
                 # rotatable=False, 
                 movable = False,
@@ -263,3 +283,73 @@ class RectPicker(object) :
 
     def on_error(self):
         pass
+
+
+
+@register
+class LinePicker(object) :
+
+    icon = imagect.icon("picker_line.png")
+
+    def __init__(self):
+        self.machine = Pt2Machine()
+
+    def start(self, gPicker, target) :
+        self.source = gPicker
+        self.dis = gPicker.mouse_ev.pipe(
+            ops.flat_map(self.machine.transition)
+            ).subscribe(self)
+            
+        self.parentItem = target
+
+    def stop(self) :
+        
+        if self.dis :
+            pe = PickerEvent()
+            pe.picker = self 
+            pe.code = CommandCode.End
+            self.source.subpicker_ev.on_next(pe)
+            self.dis.dispose()
+            self.dis = None             
+            self.drawer = None
+
+    def on_next(self, info) :
+        o = self.parentItem.mapFromScene(info.x, info.y)
+        if info.code == CommandCode.Begin :
+            self.pts_start = o
+            self.drawer = RectROI(self.pts_start, [0, 0], 
+                parent = self.parentItem, 
+                translateSnap=True, 
+                movable = False,
+                removable=True,
+                )
+            self.drawer.setZValue(100.0)
+            self.drawer.setPos(self.pts_start)
+       
+        else :
+            if info.code == CommandCode.Append or info.code == CommandCode.Move :
+                
+                minx = min(o.x(), self.pts_start.x())
+                miny = min(o.y(), self.pts_start.y())
+                maxx = max(o.x(), self.pts_start.x())
+                maxy = max(o.y(), self.pts_start.y())
+
+                rect_start = QPointF(minx, miny)
+                self.drawer.setPos(rect_start)
+                self.drawer.setSize((maxx-minx,maxy-miny))
+
+            elif info.code == CommandCode.End :
+                self.on_completed()
+
+    def on_completed(self):
+        self.drawer.translatable = True
+        center = [0, 0]
+        self.drawer.addScaleHandle([1, 0.5], [center[0], 0.5])
+        self.drawer.addScaleHandle([0.5, 1], [0.5, center[1]])
+
+        self.stop()
+
+    def on_error(self):
+        pass
+
+

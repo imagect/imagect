@@ -10,6 +10,8 @@ import imagect.api.datasample as dsample
 from zope.interface import Interface, Attribute
 from zope.component import getUtility
 import uuid
+from rx.subject import Subject
+import imagect
 
 # TODO dataset input
 # TODO dataset management
@@ -58,18 +60,25 @@ class DataSet(HasTraits):
 
     shape = Property()
 
-    data = Instance(np.ndarray, transient=True)
+    #data = Instance(np.ndarray, transient=True)
+
+    crrentStackIndex = Int()
+
+    stackUpdated = Instance(Subject)
 
     def __init__(self, fakedata=False):
 
         self.meta = DataMeta()
         self.id = uuid.uuid4()
+        self.currentStackIndex = 0
 
         if fakedata:
             data = dsample.vol()
             s, w, h = data.shape
             data.resize((s, w, h, 1))
             self.data = data
+        #
+        self.stackUpdated = Subject()
 
     def astype(self, t):
         ds = DataSet()
@@ -112,6 +121,49 @@ class DataSet(HasTraits):
         if self.channel == 1:
             s = s.squeeze(axis=2)
         return s
+
+    def getCurrentStack(self) :
+        return self.getStack(self.currentStackIndex)
+
+    def updateCurrentStack(self, sliceData) :
+        self.updateStack(self.currentStackIndex, sliceData)
+
+    def updateStack(self, index, sliceData) :
+        """
+        更新一个切片的数据
+        """
+        shape = sliceData.shape 
+        assert self.stack > index and index > -1
+        copy = sliceData
+        if len(shape) == 2 :
+            assert self.channel == 1
+            assert self.height == shape[0]
+            assert self.width == shape[1]
+            copy = sliceData.reshape((shape[0],shape[1],1))
+        elif len(shape) == 3:
+            assert self.channel == shape[2]
+
+        # print(copy.dtype)
+        # print(self.data.dtype)
+        # imagect.showImage(copy.astype(self.data.dtype))
+
+        self.data[index] = copy.astype(self.data.dtype)
+        self.stackUpdated.on_next(index)
+
+    def asSlice(self) :
+        """
+        以(height, width, channel)的格式导出数据
+        """
+        assert self.stack == 1
+        return self.data.reshape(self.height,self.width,self.channel)
+
+    def asGray(self) :
+        """
+        以(height, width)的格式导出数据
+        """
+        assert self.stack == 1
+        assert self.channel == 1
+        return self.data.reshape(self.height, self.width)
 
     traits_view = View(
         Group(

@@ -10,3 +10,8 @@ icon_dir = os.path.abspath(os.path.join(imagect_dir, "resource/icon"))
 
 def icon(filename):
     return QIcon(os.path.join(icon_dir, filename))
+
+
+
+from . import pgtools
+showImage = pgtools.showImage

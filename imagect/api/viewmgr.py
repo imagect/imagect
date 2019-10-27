@@ -21,11 +21,18 @@ class Viewer(QtGui.QMainWindow) :
     vid = UUID()
 
     slice_data = Instance(np.ndarray)
+
+    vol_data = Instance(DataSet)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setMouseTracking(False)
         self.vid = uuid.uuid4()
+        self.vol_data = None
+        self.slice_data = None
+
+    def setImageData(self, data : DataSet) :
+        pass
 
 
 class Session(HasTraits):
@@ -68,6 +75,8 @@ class Session(HasTraits):
 
     def insert(self, v) :
         vs = list(filter(lambda o : o.vid == v.vid, self.views))
+        v.sid = self.sid
+        assert v.did == self.did 
         if len(vs) == 0:
             self.views.append(v)
 

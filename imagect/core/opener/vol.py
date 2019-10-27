@@ -5,10 +5,11 @@ from traits.api import *
 from traitsui.api import *
 import numpy as np
 from imagect.api.dataset import DataSet, DataMeta
+import imagect.config as config 
 
 class RawVolMeta(HasTraits):
 
-    path = File("E:/CloudData/lizong_640_640_800_uint16_0Head.raw.raw")
+    path = File(config.SAMPLE_DATA_RAWDATA)
     width = Int(640)
     height = Int(640)
     stack = Int(800)
@@ -71,10 +72,11 @@ class VolReader(HasTraits):
                                  pro.height,
                                  pro.width)
                              )
+            
             s, w, h = data.shape
             data = data.reshape((s,w,h,1))
             ds = DataSet()
-            ds.data = data
+            ds.data = data.astype(np.float64)
             ds.meta.path = pro.path
             ds.meta.reader = VolReader.__class__ #.name
             ds.meta.category = "vol"

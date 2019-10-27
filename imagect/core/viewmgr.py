@@ -66,14 +66,16 @@ class SessionMgr(HasTraits):
         s.data = ds
         
         #todo : create other view according to ds.meta
-        v = view.VolViewer()
-        v.did = ds.did 
-        v.sid = s.sid
-        v.setImageData( ds.getStack(int(ds.stack/2)) )
-        s.insert(v)
-        print("view created vid = {}".format(str(v.vid)))
-        print("session created sid={}".format(str(s.sid)))
-        return (s,v)
+        if ds.stack == 1 : 
+            v = view.VolViewer()
+            v.setImageData(ds)
+            s.insert(v)
+            return (s,v)
+        elif ds.stack > 1:
+            v = view.VolViewer()
+            v.setImageData(ds)
+            s.insert(v)
+            return (s,v)
 
     def insertVolSession(self, ds) :
         s,v = self.createSession(ds)

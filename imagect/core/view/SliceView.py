@@ -67,3 +67,5 @@ class SliceView(pg.PlotWidget) :
     
     def setImage(self, data) :
         self.img.setImage(data)
+    
+

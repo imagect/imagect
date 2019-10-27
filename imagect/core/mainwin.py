@@ -58,7 +58,6 @@ class MainWin(QMainWindow) :
         
         def showjw() :
             if not self._jupyter_widget.isVisible() or self._jupyter_widget.isMinimized() :
-                self._jupyter_widget.show()
                 self.showNormal()
                 self._jupyter_widget.raise_()
             else:

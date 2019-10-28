@@ -55,7 +55,7 @@ def showui() :
 
 # add to menu
 from imagect.api.actmgr import addActFun, renameAct
-addActFun("help.example.pyqtgraph", "pyqtgraph", index =1, shortcut="F7")(showui) 
+addActFun("help.example.pyqtgraph", "pyqtgraph", index =1)(showui) 
 
 if __name__ == "__main__" :
     app = QtGui.QApplication([])    

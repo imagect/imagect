@@ -48,7 +48,7 @@ class Window(QWidget):
 
 # add to menu
 from imagect.api.actmgr import addActFun, renameAct
-@addActFun("help.example.rxqt", "Rx", index =1, shortcut="F6") 
+@addActFun("help.example.rxqt", "Rx", index =1) 
 def showui():
     w = Window()
     w.show()

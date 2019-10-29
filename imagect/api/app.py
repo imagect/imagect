@@ -19,19 +19,6 @@ class IApp(interface.Interface) :
         """
         pass
 
-    def rx_scheduler():
-        """
-        scheduler from qt ui loop
-        """
-        pass
-
-    
-    def rx_threadpool(self):
-        """
-        thread pool scheduler
-        """
-        pass
-
     def showMsg(title : str, msg : str):
         """
         show message box
@@ -57,5 +44,3 @@ def get() :
 def getLoop() :
     return get().asyncio_loop()
 
-def getScheduler() :
-    return get().rx_scheduler()

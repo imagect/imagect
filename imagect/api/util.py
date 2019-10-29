@@ -19,8 +19,10 @@ def showSlice() :
     from matplotlib import pyplot as plt
     stack = viewmgr.currentStack()
     if stack is not None:
-        # print("stack.hpe={}".format(stack.shape))
-        # s = stack.shape
-        # if s[2] ==1 :
-            # stack = stack.reshape((s[0], s[1]))
         plt.imshow(stack)
+
+def showSliceAt(i) :
+    from matplotlib import pyplot as plt
+    ds = viewmgr.currentDataSet()
+    if ds is not None:        
+        plt.imshow(ds.getStack(i))

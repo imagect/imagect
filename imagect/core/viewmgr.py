@@ -108,6 +108,12 @@ class SessionMgr(HasTraits):
             return v.slice_data
         return None
 
+    def currentStackIndex(self):
+        v = self.getView(self.current_sid, self.current_vid)
+        if v :
+            return self.currentDataSet.crrentStackIndex
+        return None
+
     def currentDataSet(self)  :
         return self.getDataset(self.current_sid)
 

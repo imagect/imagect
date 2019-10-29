@@ -69,36 +69,20 @@ def doImageProcInt(proc, ParaKlass):
         stack = vm.currentStack().copy()
 
         def proc_data(p):
-            def comp(f):
-                return proc(f, p)
+            def comp():
+                d = proc(stack, p)
 
-            def on_next(d):
                 def cb() :
                     dataset.updateStack(index, d)
                     mainwin.get().showMessage("Complete")
                 app.get().asyncio_loop().call_soon_threadsafe(cb)
 
-            def on_next(d):
-                dataset.updateStack(index, d)
-                mainwin.get().showMessage("Complete")
-
             if config.RUN_THREAD:
-                rx.just(stack).pipe(
-                    ops.observe_on(app.get().rx_threadpool()),
-                    ops.map(comp),
-                    # ops.observe_on(app.get().rx_scheduler()),
-                    # ops.subscribe_on(app.get().rx_scheduler()),
-                ).subscribe(
-                    on_next,
-                    on_error=print,
+                app.get().asyncio_loop().run_in_executor(
+                    app.get().threadpool(), comp
                 )
             else:
-                rx.just(stack).pipe(
-                    ops.map(comp),
-                ).subscribe(
-                    on_next,
-                    on_error=print,
-                )
+                comp()
 
         class IntHandler(Controller):
 
@@ -111,9 +95,10 @@ def doImageProcInt(proc, ParaKlass):
             def object__updated_changed(self, info):
                 if info.initialized:
                     info.ui.title += "*"
+                    self.apply(info.object)
 
             def apply(self, o):
-                self._changed = True
+                # self._changed = True
                 proc_data(o)
 
             def closed(self, info, is_ok):

@@ -44,30 +44,31 @@ class MainWin(QMainWindow) :
         super().__init__(parent=parent, flags=flags)
 
         self._jupyter_widget = make_jupyter_widget_with_kernel()
-        self._jupyter_widget.hide()
-        # self.setCentralWidget(self._jupyter_widget)
+        # self._jupyter_widget.hide()
+        self.setCentralWidget(self._jupyter_widget)
         app.get().aboutToQuit.connect(self.shutdown_kernel)
 
         self.statusBar()
+
         self.toolBarFile = QToolBar(self)
 
-        def resizeHeight(wdg, height) :
-            size = wdg.size()
-            size.setHeight(height)
-            wdg.resize(size) 
+        # def resizeHeight(wdg, height) :
+        #     size = wdg.size()
+        #     size.setHeight(height)
+        #     wdg.resize(size) 
         
-        def showjw() :
-            if not self._jupyter_widget.isVisible() or self._jupyter_widget.isMinimized() :
-                self.showNormal()
-                self._jupyter_widget.raise_()
-            else:
-                self._jupyter_widget.hide()
+        # def showjw() :
+        #     if not self._jupyter_widget.isVisible() or self._jupyter_widget.isMinimized() :
+        #         self.showNormal()
+        #         self._jupyter_widget.raise_()
+        #     else:
+        #         self._jupyter_widget.hide()
 
-        ctb = self.toolBarFile.addAction("Console", showjw)
-        ctb.setIcon(imagect.icon("console.png"))
-        
+        ctb = self.toolBarFile.addAction("Console")
+        ctb.setIcon(imagect.icon("console.png"))        
         self.addToolBar(self.toolBarFile)
-        self.resize(600, 60)
+
+        self.resize(600, 600)
 
     def window(self):
         return self

@@ -25,20 +25,10 @@ class App(QApplication):
         self.loop = QEventLoop(self)
         asyncio.set_event_loop(self.loop)
 
-        self.scheduler = QtScheduler(QtCore)
-
-        self.thread_pool_scheduler = ThreadPoolScheduler()
-
         self.thread_pool = concurrent.futures.ThreadPoolExecutor()
 
     def asyncio_loop(self):
         return self.loop
-
-    def rx_scheduler(self):
-        return self.scheduler
-
-    def rx_threadpool(self):
-        return self.thread_pool_scheduler
 
     def threadpool(self):
         return self.thread_pool

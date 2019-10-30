@@ -48,8 +48,12 @@ class DataSet(HasTraits):
 
     meta = DataMeta()
 
+    #TODO offset 
+    offset = Int(0)
+
     dtype = Property()
 
+    #TODO sslice
     stack = Property()
 
     height = Property()
@@ -169,6 +173,7 @@ class DataSet(HasTraits):
         Group(
             Item(name="did"),
             Item(name="dtype"),
+            Item(name="offset"),
             Item(name="shape"),
             Item(name="stack"),
             Item(name="height"),

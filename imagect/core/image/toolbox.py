@@ -18,11 +18,11 @@ def demoTimeOut():
 
 class SmoothPara(HasTraits):
     width = Int(10)
-
+    #flags = ...
 
 @image.proc_interactive("image.Smooth", "Smooth", index=1, ParaKlass=SmoothPara, shortcut="F6")
 def smooth(data, p):
-    #demoTimeOut()
+    demoTimeOut()
     return filters.gaussian(data, p.width)
 
 @image.proc_with_para("image.Smooth2", "Smooth2", index=2, ParaKlass=SmoothPara, shortcut="F7")
@@ -30,6 +30,11 @@ def smooth(data, p):
     #demoTimeOut()
     return filters.gaussian(data, p.width)
 
+
+@image.proc_with_para("image.Smooth3", "Smooth3", index=3)
+def smooth(data):
+    #demoTimeOut()
+    return filters.gaussian(data, 1)
 
 # @image.proc_with_para("image.Median", "median", index=1)
 # def median(data):

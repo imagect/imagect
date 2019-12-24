@@ -16,9 +16,13 @@ zope.component
 
 # gui
 pyqt5
+qtpy
 rx
+
+# for jupyter notebook
 asyncqt
-# PyQtWebKit
+# console
+qtconsole
 
 # traits
 traits
@@ -34,8 +38,6 @@ datetime
 # fp
 first
 
-# console
-qtconsole
 
 #graph
 pyqtgraph

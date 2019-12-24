@@ -6,7 +6,7 @@ import pyqtgraph.Qt as Qt
 import pyqtgraph as pg
 
 import rx 
-from rx import operators as ops 
+# from rx import operators as ops 
 from rx.subject import Subject
 
 import imagect.core.view.SliceView as sview 

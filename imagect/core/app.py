@@ -8,8 +8,8 @@ from PyQt5.QtCore import QStandardPaths
 from asyncqt import QEventLoop, QThreadExecutor
 import asyncio
 import concurrent
-from rx.scheduler.mainloop import QtScheduler
-from rx.scheduler import ThreadPoolScheduler
+# from rx.scheduler.mainloop import QtScheduler
+# from rx.scheduler import ThreadPoolScheduler
 
 @interface.implementer(IApp)
 class App(QApplication):

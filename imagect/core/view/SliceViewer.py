@@ -3,9 +3,9 @@ from imagect.api.viewmgr import Viewer
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph as pg
 
-import rx 
-from rx import operators as ops 
-from rx.subject import Subject
+# import rx 
+# from rx import operators as ops 
+# from rx.subject import Subject
 
 import imagect.core.view.SliceView as sview 
 

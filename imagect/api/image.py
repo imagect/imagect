@@ -23,6 +23,7 @@ def doImageProc(proc, ParaKlass):
         # 如果有参数模板
         if ParaKlass:
             p = ParaKlass()
+            #todo width and height
             ret = p.configure_traits(kind="modal")
 
             # 给定参数模板，但被用户放弃

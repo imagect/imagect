@@ -15,14 +15,15 @@ datamgr = imagect.api.dataset.get()
 viewmgr = imagect.api.viewmgr.get()
 
 
-def showSlice() : 
+def showSlice( i = -1) : 
     from matplotlib import pyplot as plt
-    stack = viewmgr.currentStack()
-    if stack is not None:
-        plt.imshow(stack)
 
-def showSliceAt(i) :
-    from matplotlib import pyplot as plt
-    ds = viewmgr.currentDataSet()
-    if ds is not None:        
-        plt.imshow(ds.getStack(i))
+    if i == -1 :
+        stack = viewmgr.currentStack()
+        if stack is not None:
+            plt.imshow(stack)
+    else :
+        ds = viewmgr.currentDataSet()
+        if ds is not None:        
+            plt.imshow(ds.getStack(i))
+

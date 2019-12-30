@@ -21,8 +21,12 @@ rx
 
 # for jupyter notebook
 asyncqt
+
 # console
 qtconsole
+
+# PyQtWebKit
+qtpy
 
 # traits
 traits

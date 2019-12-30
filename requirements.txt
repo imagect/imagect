@@ -19,6 +19,7 @@ pyqt5
 rx
 asyncqt
 # PyQtWebKit
+qtpy
 
 # traits
 traits

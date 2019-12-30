@@ -2,6 +2,7 @@ from enum import Flag, auto
 
 class FilterFlag(Flag) :
 
+    NOTHING = auto()
     DOES_8G = auto()
     DOES_8C = auto()
     DOES_16 = auto()
@@ -27,7 +28,8 @@ class FilterFlag(Flag) :
 
 class PlugInFilter(object) :
 
-    pass
+    def setup(self, arg, imp):
+        return FilterFlag.NOTHING
 
 if __name__ == "__main__":
     print(FilterFlag(2))

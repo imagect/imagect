@@ -15,3 +15,10 @@ def icon(filename):
 
 from . import pgtools
 showImage = pgtools.showImage
+
+
+# todo
+WindowManager = 0
+
+def runPlugin(commandName, className, arg) :
+    pass

@@ -1,0 +1,3 @@
+
+class WindowManager(object) :
+    pass

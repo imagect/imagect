@@ -1,7 +1,7 @@
 from enum import Flag, auto
 
-class FilterFlag(Flag) :
 
+class FilterFlag(Flag):
     NOTHING = auto()
     DOES_8G = auto()
     DOES_8C = auto()
@@ -12,8 +12,8 @@ class FilterFlag(Flag) :
     DOES_STACKS = auto()
     SUPPORTS_MASKING = auto()
     NO_CHANGES = auto()
-    NO_UNDO = auto() 
-    NO_IMAGE_REQUIRED = auto() 
+    NO_UNDO = auto()
+    NO_IMAGE_REQUIRED = auto()
     ROI_REQUIRED = auto()
     STACK_REQUIRED = auto()
     DONE = auto()
@@ -26,10 +26,11 @@ class FilterFlag(Flag) :
     NO_UNDO_RESET = auto()
 
 
-class PlugInFilter(object) :
+class PlugInFilter(object):
 
     def setup(self, arg, imp):
         return FilterFlag.NOTHING
+
 
 if __name__ == "__main__":
     print(FilterFlag(2))

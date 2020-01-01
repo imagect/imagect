@@ -6,7 +6,6 @@ from qtpy.QtWidgets import QMainWindow, QLabel, QToolBar, QPushButton
 import sys
 
 import rx
-from rx import Observable
 from rx.scheduler import ThreadPoolScheduler
 from rx import operators as ops
 from rx.scheduler.mainloop import QtScheduler

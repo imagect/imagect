@@ -1,22 +1,15 @@
-from zope.interface import implementer
-from zope.component import getGlobalSiteManager
-from collections import defaultdict
-from traits.api import *
-from traitsui.api import *
-from traitsui.menu import OKButton, CancelButton
+from traits.api import HasTraits, UUID, List, String, Type, Int, Property, Instance
+from traitsui.api import View, Group, Item, InstanceEditor, OKButton, CancelButton
 import numpy as np
 import imagect.api.datasample as dsample
-from zope.interface import Interface, Attribute
-from zope.component import getUtility
 import uuid
-from rx.subject import Subject
-import imagect
 
-# TODO dataset input
-# TODO dataset management
-# TODO add datameta for dataset, describe source and reader
+"""
 
-sampleId = "784c59df-acb8-4d4e-b2e5-fa926264c79e"
+image stack
+    shape = (layer, height, width, channel)
+
+"""
 
 
 class DataMeta(HasTraits):
@@ -25,9 +18,10 @@ class DataMeta(HasTraits):
     reader = Type()
 
 
-class DataSet(HasTraits):
+class ImageStack(HasTraits):
+
     """
-    DataSet
+    ImageStack
 
     dtype : numpy.dtype
 
@@ -53,7 +47,7 @@ class DataSet(HasTraits):
     dtype = Property()
 
     # TODO sslice
-    stack = Property()
+    layer = Property()
 
     height = Property()
 
@@ -63,28 +57,22 @@ class DataSet(HasTraits):
 
     shape = Property()
 
-    # data = Instance(np.ndarray, transient=True)
+    currentSliceIndex = Int()
 
-    crrentStackIndex = Int()
-
-    stackUpdated = Instance(Subject)
-
-    def __init__(self, fakedata=False):
+    def __init__(self, fakeData=False):
 
         self.meta = DataMeta()
         self.id = uuid.uuid4()
-        self.currentStackIndex = 0
+        self.currentSliceIndex = 0
 
-        if fakedata:
+        if fakeData:
             data = dsample.vol()
             s, w, h = data.shape
             data.resize((s, w, h, 1))
             self.data = data
-        #
-        self.stackUpdated = Subject()
 
     def astype(self, t):
-        ds = DataSet()
+        ds = ImageStack()
         ds.data = self.data.astype(t)
         return ds
 
@@ -97,7 +85,7 @@ class DataSet(HasTraits):
     def _get_shape(self):
         return self.data.shape
 
-    def _get_stack(self):
+    def _get_layer(self):
         shape = self.data.shape
         assert len(shape) == 4
         return shape[0]
@@ -118,25 +106,25 @@ class DataSet(HasTraits):
         assert shape[3] == 1 or shape[3] == 3 or shape[3] == 4
         return shape[3]
 
-    def getStack(self, s):
-        assert s > -1 and s < self.stack
+    def getSlice(self, s):
+        assert s > -1 and s < self.layer
         s = self.data[s, :, :, :]
         if self.channel == 1:
             s = s.squeeze(axis=2)
         return s
 
-    def getCurrentStack(self):
-        return self.getStack(self.currentStackIndex)
+    def getCurrentSlice(self):
+        return self.getSlice(self.currentSliceIndex)
 
-    def updateCurrentStack(self, sliceData):
-        self.updateStack(self.currentStackIndex, sliceData)
+    def updateCurrentSlice(self, sliceData):
+        self.updateSlice(self.currentSliceIndex, sliceData)
 
-    def updateStack(self, index, sliceData):
+    def updateSlice(self, index, sliceData):
         """
         更新一个切片的数据
         """
         shape = sliceData.shape
-        assert self.stack > index > -1
+        assert self.layer > index > -1
         copy = sliceData
         if len(shape) == 2:
             assert self.channel == 1
@@ -151,20 +139,20 @@ class DataSet(HasTraits):
         # imagect.showImage(copy.astype(self.data.dtype))
 
         self.data[index] = copy.astype(self.data.dtype)
-        self.stackUpdated.on_next(index)
+        return True
 
     def asSlice(self):
         """
         以(height, width, channel)的格式导出数据
         """
-        assert self.stack == 1
+        assert self.layer == 1
         return self.data.reshape(self.height, self.width, self.channel)
 
     def asGray(self):
         """
         以(height, width)的格式导出数据
         """
-        assert self.stack == 1
+        assert self.layer == 1
         assert self.channel == 1
         return self.data.reshape(self.height, self.width)
 
@@ -174,7 +162,7 @@ class DataSet(HasTraits):
             Item(name="dtype"),
             Item(name="offset"),
             Item(name="shape"),
-            Item(name="stack"),
+            Item(name="layer"),
             Item(name="height"),
             Item(name="width"),
             Item(name="channel"),
@@ -185,7 +173,7 @@ class DataSet(HasTraits):
         buttons=[OKButton, CancelButton],
         # statusbar = [StatusItem(name="title")],
         dock="vertical",
-        title="Dataset Property"
+        title="ImageStack Property"
     )
 
     @staticmethod
@@ -193,7 +181,7 @@ class DataSet(HasTraits):
         assert len(data.shape) == 3
         s, w, h = data.shape
         d = data.reshape((s, w, h, 1))
-        ds = DataSet()
+        ds = ImageStack()
         ds.data = d
 
         meta = DataMeta()
@@ -206,7 +194,7 @@ class DataSet(HasTraits):
         assert len(data.shape) == 3
         h, w, c = data.shape
         d = data.reshape((1, h, w, c))
-        ds = DataSet()
+        ds = ImageStack()
         ds.data = d
 
         meta = DataMeta()
@@ -219,7 +207,7 @@ class DataSet(HasTraits):
         assert len(data.shape) == 3
         h, w = data.shape
         d = data.reshape((1, h, w, 1))
-        ds = DataSet()
+        ds = ImageStack()
         ds.data = d
 
         meta = DataMeta()
@@ -235,93 +223,6 @@ class DataSet(HasTraits):
             "chessboard": dsample.chessboard
         }
         if name in create:
-            return DataSet.fromVol(create[name]())
+            return ImageStack.fromVol(create[name]())
         else:
-            return DataSet.fromVol(dsample.vol())
-
-
-class IDataMgr(Interface):
-    """
-    DataMngr
-    """
-
-    def get(id: str) -> DataSet:
-        """
-        fetch data by id
-        """
-        pass
-
-    def add(ds: DataSet):
-        """
-        fetch 
-        """
-        pass
-
-    def remove(id: str):
-        """
-        remove
-        """
-        pass
-
-    def queryAll():
-        """
-        query
-        """
-        pass
-
-
-def get():
-    return getUtility(IDataMgr)
-
-
-def sample():
-    mgr = get()
-    data = mgr.get(sampleId)
-    if data is None:
-        data = DataSet.fromSample()
-        mgr.add(data)
-    return data
-
-
-# TODO data manager
-@implementer(IDataMgr)
-class DataMgr(HasTraits):
-    """
-    data manager
-    """
-
-    datas = Dict()  # key_trait=UUID, value_trait=DataSet)
-
-    def get(self, id: str):
-        if id in self.datas:
-            return self.datas[id]
-        else:
-            return None
-
-    def add(self, ds):
-        if ds.did in self.datas:
-            assert False
-        self.datas[ds.did] = ds
-
-    def remove(self, id: str):
-        if id in self.datas:
-            del self.datas[id]
-
-    def queryAll(self):
-        """
-        query
-        """
-        return [k for k in self.datas.keys()]
-
-
-gsm = getGlobalSiteManager()
-try:
-    mgr = get()
-except:
-    mgr = DataMgr()
-    gsm.registerUtility(mgr, IDataMgr)
-
-if __name__ == "__main__":
-    ds = DataSet(fakedata=True)
-    # ds.meta = DataMeta()
-    ds.configure_traits()
+            return ImageStack.fromVol(dsample.vol())

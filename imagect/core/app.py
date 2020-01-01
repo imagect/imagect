@@ -8,8 +8,8 @@ from PyQt5.QtCore import QStandardPaths
 from asyncqt import QEventLoop, QThreadExecutor
 import asyncio
 import concurrent
-# from rx.scheduler.mainloop import QtScheduler
-# from rx.scheduler import ThreadPoolScheduler
+import qtools
+import qtpy.QtCore
 
 @interface.implementer(IApp)
 class App(QApplication):
@@ -27,11 +27,16 @@ class App(QApplication):
 
         self.thread_pool = concurrent.futures.ThreadPoolExecutor()
 
+        self._gui_scheduler = qtools.QtUiScheduler(qtpy.QtCore, self)
+
     def asyncio_loop(self):
         return self.loop
 
     def threadpool(self):
         return self.thread_pool
+
+    def gui_scheduler(self):
+        return self._gui_scheduler
 
     def showMsg(self, title : str, msg : str):
         """

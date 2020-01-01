@@ -1,6 +1,3 @@
 [submodule "3rd/pyqtgraph"]
 	path = 3rd/pyqtgraph
 	url = https://github.com/pyqtgraph/pyqtgraph.git
-[submodule "extern/qtools"]
-	path = extern/qtools
-	url = https://github.com/imagect/qtools.git

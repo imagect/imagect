@@ -3,7 +3,7 @@ import imagect.api.actmgr as actmgr
 import imagect.api.app as app
 import imagect.api.mainwin as mainwin
 import imagect.config as config
-#from rx.scheduler.mainloop import QtScheduler
+# from rx.scheduler.mainloop import QtScheduler
 from rx import operators as ops
 import concurrent.futures
 import asyncio
@@ -23,7 +23,7 @@ def doImageProc(proc, ParaKlass):
         # 如果有参数模板
         if ParaKlass:
             p = ParaKlass()
-            #todo width and height
+            # todo width and height
             ret = p.configure_traits(kind="modal")
 
             # 给定参数模板，但被用户放弃
@@ -32,23 +32,24 @@ def doImageProc(proc, ParaKlass):
 
         vm = vmm.get()
         v = vm.currentView()
-        dataset = vm.currentDataSet()
-        stack = vm.currentStack().copy()
+        ip = vm.currentImagePlus()
+        index = ip.getCurrentSliceIndex()
+        sslice = ip.getCurrentSlice().copy()
 
         mainwin.get().showMessage("Running")
 
         def comp():
             if not ParaKlass:
-                d=proc(stack)
+                d = proc(sslice)
             else:
-                d=proc(stack, p)
+                d = proc(sslice, p)
 
             # update ui
-            def cb() :
-                dataset.updateCurrentStack(d)
+            def cb():
+                ip.updateCurrentSlice(d)
                 mainwin.get().showMessage("Complete")
+
             app.get().asyncio_loop().call_soon_threadsafe(cb)
-            
 
         if config.RUN_THREAD:
             app.get().asyncio_loop().run_in_executor(
@@ -65,17 +66,18 @@ def doImageProcInt(proc, ParaKlass):
 
         vm = vmm.get()
         v = vm.currentView()
-        dataset = vm.currentDataSet()
-        index = dataset.currentStackIndex
-        stack = vm.currentStack().copy()
+        ip = vm.currentImagePlus()
+        index = ip.getCurrentSliceIndex()
+        sslice = ip.getCurrentSlice().copy()
 
         def proc_data(p):
             def comp():
-                d = proc(stack, p)
+                d = proc(sslice, p)
 
-                def cb() :
-                    dataset.updateStack(index, d)
+                def cb():
+                    ip.updateSlice(index, d)
                     mainwin.get().showMessage("Complete")
+
                 app.get().asyncio_loop().call_soon_threadsafe(cb)
 
             if config.RUN_THREAD:
@@ -107,7 +109,7 @@ def doImageProcInt(proc, ParaKlass):
                     proc_data(info.object)
                 else:
                     if self._changed:
-                        dataset.updateStack(index, stack)
+                        ip.updateSlice(index, sslice)
 
         mainwin.get().showMessage("Running")
         intpara = ParaKlass()

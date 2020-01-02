@@ -1,19 +1,17 @@
-
 from imagect.api.viewmgr import Viewer
 from imagect.api.dataset import DataSet
 from pyqtgraph.Qt import QtCore, QtGui
-import pyqtgraph.Qt as Qt
-import pyqtgraph as pg
-
-import rx 
-# from rx import operators as ops 
+# import pyqtgraph.Qt as Qt
+# import pyqtgraph as pg
+# import rx
 from rx.subject import Subject
 
-import imagect.core.view.SliceView as sview 
+import imagect.core.view.SliceView as sview
 
-class VolViewer(Viewer) :
-    def __init__(self) :
-        
+
+class VolViewer(Viewer):
+    def __init__(self):
+
         super().__init__()
         super().setMouseTracking(False)
         self.resize(1000, 800)
@@ -22,7 +20,7 @@ class VolViewer(Viewer) :
         self.setCentralWidget(self.view)
 
         self.toolBarPickers = self.addToolBar("Picker")
-        for a in self.view.pickerActs :
+        for a in self.view.pickerActs:
             self.toolBarPickers.addAction(a)
 
         # update image data use slider
@@ -34,59 +32,62 @@ class VolViewer(Viewer) :
         self.statusBar().addPermanentWidget(self.range)
         self.slider = QtGui.QSlider(orientation=QtCore.Qt.Horizontal, parent=self)
         self.statusBar().addPermanentWidget(self.slider, stretch=1)
-        def updateImageItemFromSlider(v) :
-            assert self.vol_data 
-            assert v < self.vol_data.stack
+
+        def updateImageItemFromSlider(v):
+            assert self.vol_data
+            assert v < self.vol_data.layer
             # print("slider update to slice {}".format(v))
-            self.sliceDataSubject.on_next(self.vol_data.getStack(v))
-            self.range.setText("{}/{}".format(v, self.vol_data.stack))
-            self.vol_data.currentStackIndex = v
+            self.sliceDataSubject.on_next(self.vol_data.getSlice(v))
+            self.range.setText("{}/{}".format(v, self.vol_data.layer))
+            self.vol_data.currentSliceIndex = v
+
         self.slider.valueChanged.connect(updateImageItemFromSlider)
 
         # update image when dataset changed
-        self.stackUpdatedHandle = None
+        # self.stackUpdatedHandle = None
 
-        
-    def setImageData(self, data : DataSet) :      
+    def setImageData(self, data: DataSet):
 
-        if self.stackUpdatedHandle :
-            self.stackUpdatedHandle.dispose()
-        self.stackUpdatedHandle = data.stackUpdated.subscribe(self.setImageSliceIndex)
+        # if self.stackUpdatedHandle :
+        #     self.stackUpdatedHandle.dispose()
+        # self.stackUpdatedHandle = data.stackUpdated.subscribe(self.setImageSliceIndex)
 
         self.did = data.did
-        self.vol_data = data 
+        self.vol_data = data
 
         # setup slider
-        stack = data.stack 
+        layer = data.layer
         self.slider.setMinimum(0)
-        self.slider.setMaximum(stack)
-        if stack > 1 :
+        self.slider.setMaximum(layer)
+        if layer > 1:
             self.statusBar().show()
-        else :
+        else:
             self.statusBar().hide()
-        self.slider.setValue(data.currentStackIndex)
-        self.range.setText("{}/{}".format(data.currentStackIndex, data.stack))
+        self.slider.setValue(data.currentSliceIndex)
+        self.range.setText("{}/{}".format(data.currentSliceIndex, data.layer))
 
         # update image item
-        self.sliceDataSubject.on_next(data.getCurrentStack())
+        self.sliceDataSubject.on_next(data.getCurrentSlice())
 
-    def setImageSliceData(self, data) :
+    def setImageSliceData(self, data):
         self.onNextSliceData(data)
 
-    def setImageSliceIndex(self, index) :
+    def setImageSliceIndex(self, index):
         assert self.vol_data
         self.slider.setValue(index)
         if index == self.slider.value():
-            self.sliceDataSubject.on_next(self.vol_data.getStack(index))
-    
-    def onNextSliceData(self, slice_data) :
-        self.slice_data = slice_data 
-        self.view.setImage(self.slice_data) 
+            self.sliceDataSubject.on_next(self.vol_data.getSlice(index))
 
-if __name__ == "__main__" :
+    def onNextSliceData(self, slice_data):
+        self.slice_data = slice_data
+        self.view.setImage(self.slice_data)
+
+
+if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
     import imagect.api.dataset as ds
     import numpy as np
+
     app = QApplication([])
 
     dm = ds.get()

@@ -7,6 +7,9 @@ class IApp(interface.Interface) :
     App Interface for imagect
     """
 
+    def qt_app():
+        pass
+
     def mainwin() :
         """
         IMainWin
@@ -40,6 +43,9 @@ class IApp(interface.Interface) :
 
 def get() :
     return getUtility(IApp)
+
+def getQtApp() :
+    return getUtility(IApp).qt_app()
 
 def getLoop() :
     return get().asyncio_loop()

@@ -1,7 +1,7 @@
 from enum import Flag, auto
 
 
-class FilterFlag(Flag):
+class PlugInFlag(Flag):
     NOTHING = auto()
     DOES_8G = auto()
     DOES_8C = auto()
@@ -26,11 +26,27 @@ class FilterFlag(Flag):
     NO_UNDO_RESET = auto()
 
 
-class PlugInFilter(object):
+class PlugIn(object):
 
     def setup(self, arg, imp):
-        return FilterFlag.NOTHING
+        """
+        算法参数配置，交互操作，该函数在界面线程执行
+        显示对话框，其中设定所需参数，
+        :param arg:
+        :param imp:
+        :return: (算法的处理能力，算法的输入参数）
+        """
+        return PlugInFlag.NOTHING, None
+
+    def run(self, arg, imp):
+        """
+        算法执行，该函数在后台线程执行
+        :param arg:
+        :param imp:
+        :return:
+        """
+        pass
 
 
 if __name__ == "__main__":
-    print(FilterFlag(2))
+    print(PlugInFlag(2))

@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "python.pythonPath": "ven\\Scripts\\python.exe",
     "terminal.integrated.env.linux" : {
         "PYTHONPATH" : "${workspaceFolder}:${PYTHONPATH}",
         "PYTHONINT"  : "venv/bin/python"

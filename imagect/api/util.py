@@ -18,12 +18,14 @@ viewmgr = imagect.api.viewmgr.get()
 def showSlice( i = -1) : 
     from matplotlib import pyplot as plt
 
+    ip = viewmgr.currentImagePlus()
+    if ip is None :
+        return
+
     if i == -1 :
-        stack = viewmgr.currentStack()
-        if stack is not None:
-            plt.imshow(stack)
-    else :
-        ds = viewmgr.currentDataSet()
-        if ds is not None:        
-            plt.imshow(ds.getStack(i))
+        sslice = ip.getCurrentSlice()
+        if sslice is not None:
+            plt.imshow(sslice)
+    else :       
+        plt.imshow(ip.getSlice(i))
 

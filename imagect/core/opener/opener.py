@@ -20,7 +20,7 @@ def newimage() :
 
     sm = vm.get()
     if sm :
-        sm.insertVolSession(sample)
+        sm.insertVolImagePlus(sample)
 
 
 

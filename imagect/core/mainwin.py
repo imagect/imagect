@@ -3,14 +3,14 @@ import imagect
 import os.path
 from imagect.api.mainwin import IMainWin
 import imagect.api.actmgr
-from imagect.api.actmgr import addAct, addActFun, addActWdg, renameAct
+from imagect.api.actmgr import addAct, addActFun, addActWdg, renameAct, IAction, register_action
 import imagect.api.app as app
 from zope import interface
 from PyQt5.QtWidgets import QMainWindow, QAction, QToolBar, QLabel, QSpinBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-#qtconsole
+# qtconsole
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from qtconsole.inprocess import QtInProcessKernelManager
 
@@ -22,7 +22,7 @@ def make_jupyter_widget_with_kernel():
     kernel_manager = QtInProcessKernelManager(kernel_name='python3')
     kernel_manager.start_kernel(show_banner=True)
     kernel = kernel_manager.kernel
-    kernel.io_loop=app.get().asyncio_loop()
+    kernel.io_loop = app.get().asyncio_loop()
 
     kernel_client = kernel_manager.client()
     kernel_client.start_channels()
@@ -34,8 +34,7 @@ def make_jupyter_widget_with_kernel():
 
 
 @interface.implementer(IMainWin)
-class MainWin(QMainWindow) :
-
+class MainWin(QMainWindow):
     """
     implements IMainWin
     """
@@ -44,9 +43,8 @@ class MainWin(QMainWindow) :
         super().__init__(parent=parent, flags=flags)
 
         self._jupyter_widget = make_jupyter_widget_with_kernel()
-        # self._jupyter_widget.hide()
         self.setCentralWidget(self._jupyter_widget)
-        app.get().aboutToQuit.connect(self.shutdown_kernel)
+        app.get().qt_app().aboutToQuit.connect(self.shutdown_kernel)
 
         self.statusBar()
 
@@ -56,7 +54,7 @@ class MainWin(QMainWindow) :
         #     size = wdg.size()
         #     size.setHeight(height)
         #     wdg.resize(size) 
-        
+
         # def showjw() :
         #     if not self._jupyter_widget.isVisible() or self._jupyter_widget.isMinimized() :
         #         self.showNormal()
@@ -65,7 +63,7 @@ class MainWin(QMainWindow) :
         #         self._jupyter_widget.hide()
 
         ctb = self.toolBarFile.addAction("Console")
-        ctb.setIcon(imagect.icon("console.png"))        
+        ctb.setIcon(imagect.icon("console.png"))
         self.addToolBar(self.toolBarFile)
 
         self.resize(600, 600)
@@ -76,10 +74,10 @@ class MainWin(QMainWindow) :
     def menuBar(self):
         return super().menuBar()
 
-    def console(self) :
+    def console(self):
         return self._jupyter_widget
 
-    def showMessage(self, msg) :
+    def showMessage(self, msg):
         self.statusBar().showMessage(msg)
 
     def shutdown_kernel(self):
@@ -88,30 +86,35 @@ class MainWin(QMainWindow) :
 
 
 from zope.component import getUtility
-def get() :
+
+
+def get():
     return getUtility(IMainWin)
 
-@addActFun("file.exit", text="&Exit", index=10)
-def appexit():
-    app.get().exit()
 
-@addActFun("file.exampe.msg", text="&Message", index=1)
+@addActFun("file.example.msg", text="&Message", index=1)
 def apptest():
     win = get()
     win.showMessage("Test Message")
 
-@addActWdg("file.exampe.wdg", text="Show Widget", index = 3)
-class ActWdg(QSpinBox) :
-    def __init__(self, parent):
-        super().__init__(parent)  
 
-@addActFun("file.exampe.print", text="Print Actions", index = 4)
+@addActWdg("file.example.wdg", text="Show Widget", index=3)
+class ActWdg(QSpinBox):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+
+@addActFun("file.example.print", text="Print Actions", index=4)
 def appPrint():
     mngr = imagect.api.actmgr.get()
     acts = mngr.queryAll()
     for a in acts:
         print("id={}, title={}".format(a.id, a.title))
 
-renameAct("file.exampe", "Examples", index =12)
+
+renameAct("file.example", "Examples", index=12)
 
 
+@addActFun("file.exit", text="&Exit", index=10)
+def appexit():
+    app.getQtApp().exit()

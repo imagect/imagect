@@ -10,7 +10,7 @@ method to add a new menu item
 import imagect.api.actmgr
 from imagect.api.actmgr import addAct, addActFun, renameAct
 
-@addActFun("file.exampe.msg", text="&Message", index=1, shortcut="F5")
+@addActFun("file.example.msg", text="&Message", index=1, shortcut="F5")
 def apptest():
     win = get()
     win.showMessage("Test Message")
@@ -31,7 +31,7 @@ def recentMenu(qact : QAction):
 import imagect.api.actmgr
 from imagect.api.actmgr import addActWdg, renameAct
 
-@addActWdg("file.exampe.wdg", text="Show Widget", index = 3)
+@addActWdg("file.example.wdg", text="Show Widget", index = 3)
 class ActWdg(QSpinBox) :
     def __init__(self, parent):
         super().__init__(parent) 

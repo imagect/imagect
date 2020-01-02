@@ -8,26 +8,27 @@ from PyQt5.QtCore import QStandardPaths
 from asyncqt import QEventLoop, QThreadExecutor
 import asyncio
 import concurrent
-import qtools
-import qtpy.QtCore
+from imagect.qtools import gui_scheduler, qtApp
 
 @interface.implementer(IApp)
-class App(QApplication):
+class App(object):
 
     """
     application
     """
 
-    def __init__(self, argv):
-        super().__init__(argv)
-        self.setApplicationName("imagect")
+    def __init__(self):
+        super().__init__()
 
-        self.loop = QEventLoop(self)
+        qtApp.setApplicationName("imagect")
+
+        self.loop = QEventLoop(qtApp)
         asyncio.set_event_loop(self.loop)
 
         self.thread_pool = concurrent.futures.ThreadPoolExecutor()
 
-        self._gui_scheduler = qtools.QtUiScheduler(qtpy.QtCore, self)
+    def qt_app(self):
+        return qtApp
 
     def asyncio_loop(self):
         return self.loop
@@ -36,7 +37,7 @@ class App(QApplication):
         return self.thread_pool
 
     def gui_scheduler(self):
-        return self._gui_scheduler
+        return gui_scheduler
 
     def showMsg(self, title : str, msg : str):
         """

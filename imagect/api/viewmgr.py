@@ -3,20 +3,17 @@
 from zope.interface import Interface, Attribute
 from zope.component import getUtility
 from traits.api import Instance, List, HasTraits, UUID, Property
-# from traitsui.api import *
 from imagect.api.dataset import DataSet
+from imagect.ic.image_plus import ImagePlus
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
 import uuid
 
 class Viewer(QtGui.QMainWindow) :
-    """
-    sid : sessionid == datasetid
-    """
 
     did = UUID()
 
-    sid = UUID()
+    iid = UUID()
 
     vid = UUID()
 
@@ -35,82 +32,33 @@ class Viewer(QtGui.QMainWindow) :
         pass
 
 
-class Session(HasTraits):
-
-    sid = Property() 
-
-    did = Property()
-
-    data = DataSet()
-
-    # views = List(Viewer)
-
-    # traits_view = View(
-    #     Item(name="views"),
-    #     Item(name="data", editor=InstanceEditor(), style='custom',),
-    #     buttons=[OKButton, CancelButton],
-    #     #statusbar = [StatusItem(name="title")],
-    #     dock="vertical",
-    #     title="Session"
-    # )
-    def __init__(self) :
-        super().__init__()
-        self.views = []
-        
-
-    def _get_did(self) :
-        return self.data.did
-
-    def _get_sid(self) :
-        return self.data.did
-
-
-    def remove(self, vid) :
-        index = 0
-        while index < len(self.views) :
-            if self.views[index].vid == vid :
-                del(self.views[index])
-                print("remove viewer vid={}".format(vid))
-            index += 1
-
-    def insert(self, v) :
-        vs = list(filter(lambda o : o.vid == v.vid, self.views))
-        v.sid = self.sid
-        assert v.did == self.did 
-        if len(vs) == 0:
-            self.views.append(v)
-
-
-class ISessionMgr(Interface) :
+class IImagePlusMgr(Interface) :
     """
     ViewMgr
     """
-    def createSession(ds) :
+    def createImagePlus(ds) :
         pass
 
-    def insertVolSession(ds) :
+    def insertVolImagePlus(ds) :
         pass
 
-    def setCurrent(sid, vid) :
+    def setCurrent(iid, vid) :
         pass
 
     def getCurrent():
         """
-        return (sid, vid)
+        return (iid, vid)
         """
         pass 
 
     def currentView() -> Viewer :
         pass
 
-    def currentDataSet() -> DataSet :
-        pass 
-
-    def currentSession() -> Session :
+    def currentImagePlus() -> ImagePlus :
         pass
 
-    def currentStack() :
-        pass
+    # def currentSlice() :
+    #     pass
 
     def resetCurrentView(v) :
         """
@@ -120,26 +68,26 @@ class ISessionMgr(Interface) :
 
     def insert(s) -> bool :
         """
-        insert session
+        insert imageplus
         """
         pass
 
-    def getSession(sid) -> Session :
+    def getImagePlus(iid) -> ImagePlus :
         pass
 
-    def getView(sid, vid) -> Viewer :
+    def getView(iid, vid) -> Viewer :
         pass
 
-    def getDataset(sid) -> DataSet :
-        pass 
+    # def getDataset(iid) -> DataSet :
+    #     pass
 
     
 
 from zope.component import getUtility
 def get():
-    return getUtility(ISessionMgr)
+    return getUtility(IImagePlusMgr)
 
 
 if __name__ == "__main__":
-    ds = Session()
+    ds = ImagePlus()
     ds.configure_traits()

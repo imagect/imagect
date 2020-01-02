@@ -3,18 +3,17 @@ from zope.component import getUtility
 from PyQt5.QtWidgets import QAction, QMenu, QWidgetAction
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtCore import QObject
+import PyQt5.QtCore
 from typing import List
-from collections import namedtuple
 
 
 class IAction(object):
 
     def __init__(
             self,
-            icon,
-            id,
-            pid,
-            title,
+            icon="",
+            id="",
+            title="todo",
             index=0,
             callable=None,
             widget=None,
@@ -25,7 +24,11 @@ class IAction(object):
         self.icon = icon
         self.callable = callable
         self.id = id
-        self.pid = pid
+        ids = id.split(".") #[0:-1]
+        if len(ids) > 1:
+            self.pid = ".".join(ids[0:-1])
+        else:
+            self.pid = ""
         self.title = title
         self.index = index
         self.widget = widget
@@ -44,7 +47,6 @@ def createAction(id, title, callable=None, index=0, shortcut=None):
     return IAction(
         icon="",
         id=id,
-        pid=".".join(id.split(".")[0:-1]),
         title=title,
         index=index,
         callable=callable,
@@ -57,7 +59,6 @@ def createWAction(id, title, widget=None, index=0, shortcut=None):
     return IAction(
         icon="",
         id=id,
-        pid=".".join(id.split(".")[0:-1]),
         title=title,
         index=index,
         callable=None,
@@ -66,11 +67,10 @@ def createWAction(id, title, widget=None, index=0, shortcut=None):
     )
 
 
-def creatchFecthAction(id, title, fetch, index=0, shortcut=None):
+def createFecthAction(id, title, fetch, index=0, shortcut=None):
     return IAction(
         icon="",
         id=id,
-        pid=".".join(id.split(".")[0:-1]),
         title=title,
         index=index,
         callable=None,
@@ -93,7 +93,10 @@ class IActMgr(Interface):
 
     image = Attribute("""image menu""")
 
+    plugin = Attribute("""plugin menu""")
+
     help = Attribute("""help menu""")
+
 
     def topActions() -> List[IAction]:
         pass
@@ -138,6 +141,7 @@ def toQAction(act: IAction, parent: QObject):
 
     if act.shortcut is not None:
         qact.setShortcut(act.shortcut)
+        qact.setShortcutContext(PyQt5.QtCore.Qt.ApplicationShortcut)
 
     children = get().queryChildren(act.id)
 
@@ -197,6 +201,11 @@ def addAct(act: IAction):
     get().addAct(act)
 
 
+def register_action(klass) :
+    act = klass()
+    addAct(act)
+
+
 def addActFun(id: str, text: str, index=0, shortcut=None):
     def add(callable):
         a = createAction(id, title=text, callable=callable, index=index, shortcut=shortcut)
@@ -215,7 +224,7 @@ def addActWdg(id: str, text: str, index=0, shortcut=None):
 
 def addActFetch(id: str, title: str, index=0, shortcut=None):
     def add(fetch):
-        a = creatchFecthAction(id, title=title, fetch=fetch, index=index, shortcut=shortcut)
+        a = createFecthAction(id, title=title, fetch=fetch, index=index, shortcut=shortcut)
         addAct(a)
 
     return add
@@ -240,8 +249,9 @@ class ActMgr(object):
         self.file = createAction("file", "File", index=0)
         self.edit = createAction("edit", "Edit")
         self.image = createAction("image", "Image")
+        self.plugin = createAction("plugin", "Plugin")
         self.help = createAction("help", "Help")
-        for a in [self.file, self.edit, self.image, self.help]:
+        for a in [self.file, self.edit, self.image, self.plugin, self.help]:
             self.addAct(a)
 
     def renameAct(self, id: str, title: str, index=0):
@@ -250,7 +260,7 @@ class ActMgr(object):
             self.actions[id].index = index
 
     def topActions(self) -> List[QAction]:
-        return [self.file, self.edit, self.image, self.help]
+        return [self.file, self.edit, self.image, self.plugin, self.help]
 
     def addAct(self, act: IAction):
         """

@@ -7,13 +7,15 @@ import imagect.core.console
 import imagect.api.actmgr 
 from imagect.api.recent import IRecent
 import imagect.core.recent
-from imagect.api.actmgr import IActMgr, toQAction
-from imagect.api.viewmgr import ISessionMgr
+from imagect.api.actmgr import toQAction
+from imagect.api.viewmgr import IImagePlusMgr
 import imagect.core.viewmgr
 import imagect.core.opener.image
 import imagect.core.opener.opener
 import imagect.core.opener.vol
 import imagect.core.image.toolbox
+import imagect.example.menu
+import imagect.example.plugin.smooth_plugin
 
 from zope.component import getGlobalSiteManager
 
@@ -22,7 +24,7 @@ import imagect.example
 def __main__() :
     gsm = getGlobalSiteManager()
 
-    application = App([])
+    application = App()
     gsm.registerUtility(application, IApp)
 
     win = MainWin()
@@ -36,8 +38,8 @@ def __main__() :
     console = imagect.core.console.Console()
     gsm.registerUtility(console, IConsole)
 
-    vmgr = imagect.core.viewmgr.SessionMgr()
-    gsm.registerUtility(vmgr, ISessionMgr)
+    vmgr = imagect.core.viewmgr.ImagePlusMgr()
+    gsm.registerUtility(vmgr, IImagePlusMgr)
 
     win.show()
 
@@ -49,7 +51,7 @@ def __main__() :
     console.execute("%matplotlib inline")
     console.execute("import imagect.api.util as iu")
 
-    application.exec()
+    application.qt_app().exec()
 
 if __name__ == "__main__" :
 

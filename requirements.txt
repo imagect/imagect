@@ -25,9 +25,6 @@ asyncqt
 # console
 qtconsole
 
-# PyQtWebKit
-qtpy
-
 # traits
 traits
 traitsui

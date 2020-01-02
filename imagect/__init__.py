@@ -3,7 +3,6 @@ import os
 import os.path
 import sys
 
-from imagect.ic.WindowManager import WindowManager
 
 from PyQt5.QtGui import QIcon
 
@@ -17,13 +16,6 @@ def icon(filename):
     return QIcon(os.path.join(icon_dir, filename))
 
 
-
 from . import pgtools
 showImage = pgtools.showImage
 
-
-# todo
-WindowManager = 0
-
-def runPlugin(commandName, className, arg) :
-    pass

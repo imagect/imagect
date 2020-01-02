@@ -105,3 +105,4 @@ venv.bak/
 .mypy_cache/
 *.cls.vpp.lck
 *.vpp.bak_*
+/ven/

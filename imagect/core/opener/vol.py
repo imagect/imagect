@@ -12,12 +12,12 @@ class RawVolMeta(HasTraits):
     path = File(config.SAMPLE_DATA_RAWDATA)
     width = Int(640)
     height = Int(640)
-    stack = Int(800)
+    layer = Int(800)
     dtype = Enum(np.uint16, np.int16, np.uint32, np.int32)
 
     trait_view = View(
         Item(name="path", editor=FileEditor(dialog_style = "open")),
-        Item(name="stack"),
+        Item(name="layer"),
         Item(name="height"),
         Item(name="width"),
         Item(name="dtype"),
@@ -68,7 +68,7 @@ class VolReader(HasTraits):
                              dtype=pro.dtype,
                              mode="r",
                              shape=(
-                                 pro.stack,
+                                 pro.layer,
                                  pro.height,
                                  pro.width)
                              )
@@ -99,7 +99,7 @@ def newimage() :
 
     sm = vm.get()
     if sm :
-        sm.insertVolSession(sample)
+        sm.insertVolImagePlus(sample)
 
 renameAct("file.open", "Open")
 

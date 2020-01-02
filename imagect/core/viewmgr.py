@@ -1,7 +1,6 @@
-
 import imagect.api.viewmgr
 from imagect.api.dataset import DataSet
-from imagect.api.viewmgr import ISessionMgr, Viewer, Session
+from imagect.api.viewmgr import IImagePlusMgr, Viewer, ImagePlus
 from zope import interface
 from . import view
 import pyqtgraph as pg
@@ -10,21 +9,21 @@ from traits.api import HasTraits, List, Instance, UUID, Property
 from traitsui.api import View, Item, OKButton, CancelButton, InstanceEditor
 import numpy as np
 
-pg.setConfigOptions(imageAxisOrder="row-major") 
+pg.setConfigOptions(imageAxisOrder="row-major")
 
-@interface.implementer(ISessionMgr)
-class SessionMgr(HasTraits):
 
-    current_sid = Property()
+@interface.implementer(IImagePlusMgr)
+class ImagePlusMgr(HasTraits):
+    current_iid = Property()
     current_vid = Property()
     current_view = Instance(Viewer)
 
     traits_view = View(
         Item(name="sess"),
-         buttons=[OKButton, CancelButton],
-        #statusbar = [StatusItem(name="title")],
+        buttons=[OKButton, CancelButton],
+        # statusbar = [StatusItem(name="title")],
         dock="vertical",
-        title="Session"
+        title="ImagePlus"
     )
 
     class EventEator(QtCore.QObject):
@@ -33,13 +32,13 @@ class SessionMgr(HasTraits):
                 t = self.target(obj)
                 if t is not None:
                     if isinstance(evnt, QtGui.QCloseEvent):
-                        imagect.api.viewmgr.get().closeView(t.sid, t.vid)
+                        imagect.api.viewmgr.get().closeView(t.iid, t.vid)
 
-                    if isinstance(evnt, QtGui.QFocusEvent) :
-                        if evnt.gotFocus() :
+                    if isinstance(evnt, QtGui.QFocusEvent):
+                        if evnt.gotFocus():
                             imagect.api.viewmgr.get().resetCurrentView(t)
 
-            return super().eventFilter(obj,evnt)
+            return super().eventFilter(obj, evnt)
 
         def target(self, obj):
             if not isinstance(obj, QtGui.QWidget):
@@ -52,124 +51,99 @@ class SessionMgr(HasTraits):
                 pw = pw.parentWidget()
             return None
 
-
-    def __init__(self) :
+    def __init__(self):
         super().__init__()
         self.sess = []
-        self.eator = SessionMgr.EventEator()
+        self.eator = ImagePlusMgr.EventEator()
         QtGui.QGuiApplication.instance().installEventFilter(self.eator)
 
+    def createImagePlus(self, ds):
 
-    def createSession(self, ds) :
+        s = ImagePlus()
+        s.updateStack(ds)
 
-        s = Session()        
-        s.data = ds
-        
-        #todo : create other view according to ds.meta
-        if ds.stack == 1 : 
+        # todo : create other view according to ds.meta
+        if ds.layer == 1:
             v = view.VolViewer()
             v.setImageData(ds)
             s.insert(v)
-            return (s,v)
-        elif ds.stack > 1:
+            return (s, v)
+        elif ds.layer > 1:
             v = view.VolViewer()
             v.setImageData(ds)
             s.insert(v)
-            return (s,v)
+            return (s, v)
 
-    def insertVolSession(self, ds) :
-        s,v = self.createSession(ds)
+    def insertVolImagePlus(self, ds):
+        s, v = self.createImagePlus(ds)
         v.show()
         self.insert(s)
 
-    def _get_current_sid(self) :
-        return self.current_view.sid if self.current_view else None
+    def _get_current_iid(self):
+        return self.current_view.iid if self.current_view else None
 
-    def _get_current_vid(self) :
+    def _get_current_vid(self):
         return self.current_view.vid if self.current_view else None
 
-    def setCurrent(self, sid, vid) :
-        s = self.getSession(sid) 
-        v = self.getView(sid, vid)
+    def setCurrent(self, iid, vid):
+        s = self.getImagePlus(iid)
+        v = self.getView(iid, vid)
         self.resetCurrentView(v)
 
     def getCurrent(self):
         """
-        return (sid, vid)
+        return (iid, vid)
         """
-        return (self.current_sid, self.current_vid)
+        return (self.current_iid, self.current_vid)
 
-    def currentView(self)  :
+    def currentView(self):
         return self.current_view
 
-    def currentStack(self):
-        v = self.getView(self.current_sid, self.current_vid)
-        if v :
-            return v.slice_data
-        return None
+    def currentImagePlus(self):
+        return self.getImagePlus(self.current_iid)
 
-    def currentStackIndex(self):
-        v = self.getView(self.current_sid, self.current_vid)
-        if v :
-            return self.currentDataSet.crrentStackIndex
-        return None
-
-    def currentDataSet(self)  :
-        return self.getDataset(self.current_sid)
-
-    def currentSession(self)  :
-        return self.getSession(self.current_sid)
-
-    def resetCurrentView(self,v) :
+    def resetCurrentView(self, v):
         """
         用户界面操作，点击后重置当前窗口，根据当前窗口更新界面显示信息
         """
         self.current_view = v
-        if v : 
+        if v:
             print("current view ={}".format(v.vid))
 
-    def closeView(self, sid, vid) :
-        s = self.getSession(sid)
-        if not s :
-            return 
+    def closeView(self, iid, vid):
+        s = self.getImagePlus(iid)
+        if not s:
+            return
 
-        if s :
+        if s:
             s.remove(vid)
         if len(s.views) == 0:
             index = 0
-            while index < len(self.sess) :
-                if self.sess[index].sid == sid :
-                    del(self.sess[index])
-                    print("remove session sid = {}".format(sid))
+            while index < len(self.sess):
+                if self.sess[index].iid == iid:
+                    del (self.sess[index])
+                    print("remove image plus iid = {}".format(iid))
                 index += 1
 
-    def insert(self, s) :
-        res = self.getSession(s.sid)
-        if res :
-            return False 
-        else :
+    def insert(self, s):
+        res = self.getImagePlus(s.iid)
+        if res:
+            return False
+        else:
             self.sess.append(s)
             if len(s.views) > 0:
                 v = s.views[0]
                 self.current_view = v
             return True
 
-
-    def getSession(self, sid) -> Session :
-        res = list(filter( lambda s : s.sid == sid, self.sess))
+    def getImagePlus(self, iid) -> ImagePlus:
+        res = list(filter(lambda s: s.iid == iid, self.sess))
         return res[0] if len(res) == 1 else None
 
-    def getView(self, sid, vid) -> Viewer :        
-        ss = list(filter( lambda s : s.sid == sid, self.sess))
+    def getView(self, iid, vid) -> Viewer:
+        ss = list(filter(lambda s: s.iid == iid, self.sess))
         if len(ss) == 0:
             return None
-        vv = list(filter( lambda v : v.vid == vid, ss[0].views))
+        vv = list(filter(lambda v: v.vid == vid, ss[0].views))
         return vv[0] if len(vv) == 1 else None
 
-    def getDataset(self, sid) -> DataSet :
-        s = self.getSession(sid)
-        if s :
-            return s.data 
-        else :
-            return None 
-    

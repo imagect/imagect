@@ -44,8 +44,8 @@ if __name__ == "__main__" :
     sample = ds.DataSet.fromSample("vol").astype(np.float32)
     v = SliceViewer()
     v.did = sample.did
-    v.sid = sample.did 
-    v.setImageData(sample.getStack(int(sample.stack/2)))
+    v.iid = sample.did 
+    v.setImageData(sample.getSlice(int(sample.layer/2)))
     v.show()
 
     app.exec()

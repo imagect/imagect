@@ -253,7 +253,7 @@ class RectPicker(object):
                                   removable=True,
                                   # sideScalers=True,
                                   # centered=False,
-                                  pen=pg.mkPen(200, 200, 200, width=20)
+                                  pen=pg.mkPen(200, 200, 200, width=2)
                                   )
             self.drawer.setZValue(100.0)
             self.drawer.setPos(self.pts_start)

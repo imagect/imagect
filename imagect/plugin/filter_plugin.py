@@ -26,7 +26,7 @@ class PlugInFlag(Flag):
     NO_UNDO_RESET = auto()
 
 
-class PlugIn(object):
+class FilterPlugIn(object):
 
     def setup(self, arg, imp):
         """
@@ -46,6 +46,25 @@ class PlugIn(object):
         :return:
         """
         pass
+
+
+class SliceFilterPlugin(FilterPlugIn):
+
+    def run(self, arg, imp):
+        if hasattr(arg, "allLayer") and arg.allLayer:
+            for l in range(imp.data.layer):
+                s = imp.getSlice(l)
+                ret, s = self.process_slice(s, arg, imp)
+                if ret:
+                    imp.updateSlice(l, s)
+        else:
+            s = imp.getCurrentSlice().copy()
+            ret, s = self.process_slice(s, arg, imp)
+            if ret:
+                imp.updateCurrentSlice(s)
+
+    def process_slice(self, slice, arg, imp):
+        return True, slice
 
 
 if __name__ == "__main__":

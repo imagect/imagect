@@ -27,4 +27,4 @@ def setProgress(progress):
     """
 
     """
-    mainwin.get().ShowMessage("Progress {}%".format(progress))
+    mainwin.get().showMessage("Progress {}%".format(progress))

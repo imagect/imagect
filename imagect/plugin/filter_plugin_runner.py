@@ -1,4 +1,4 @@
-from .plugin import PlugIn, PlugInFlag
+from .filter_plugin import FilterPlugIn, PlugInFlag
 from threading import RLock
 import threading
 from imagect.api.actmgr import IAction, addAct
@@ -19,9 +19,9 @@ def get_para_of(klass):
     return para
 
 
-class PlugInRunner(object):
+class FilterPlugInRunner(object):
 
-    def __init__(self, filter_plugin: PlugIn):
+    def __init__(self, filter_plugin: FilterPlugIn):
         self.filter_plugin = filter_plugin
         self.arg = None
         self.imp = None
@@ -65,18 +65,18 @@ class PlugInRunner(object):
 
     @staticmethod
     def push(runner):
-        with PlugInRunner.runners_lock:
+        with FilterPlugInRunner.runners_lock:
             i = id(runner)
-            if i in PlugInRunner.runners:
+            if i in FilterPlugInRunner.runners:
                 return
             else:
-                PlugInRunner.runners[i] = runner
+                FilterPlugInRunner.runners[i] = runner
 
     @staticmethod
     def pop(runner):
-        with PlugInRunner.runners_lock:
+        with FilterPlugInRunner.runners_lock:
             i = id(runner)
-            PlugInRunner.runners.pop(i)
+            FilterPlugInRunner.runners.pop(i)
 
 
 def run_filter(klass):
@@ -88,9 +88,9 @@ def run_filter(klass):
 
     def run_filter_imp(fr):
         print("run filter in thread pool, thread id = {}, begin".format(threading.get_ident()))
-        PlugInRunner.push(fr)
+        FilterPlugInRunner.push(fr)
         fr.run()
-        PlugInRunner.pop(fr)
+        FilterPlugInRunner.pop(fr)
         print("run filter in thread pool, thread id = {}, end".format(threading.get_ident()))
 
 
@@ -100,7 +100,7 @@ def run_filter(klass):
 
     print("gui thread id = {}".format(threading.get_ident()))
     rx.just(filter).pipe(
-        ops.map(lambda f: PlugInRunner(f)),
+        ops.map(lambda f: FilterPlugInRunner(f)),
         ops.filter(lambda r: r.setup()),
         ops.subscribe_on(gui_scheduler),
         ops.observe_on(thread_pool_scheduler),

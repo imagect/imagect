@@ -1,5 +1,6 @@
 from imagect.api.actmgr import IAction, register_action, addActFun, renameAct
 import imagect.api.app as app
+import imagect
 
 """
 两种方法等价
@@ -19,6 +20,7 @@ class ExitMenuItem(IAction):
         self.pid = "help.demo"
         self.title = "Exit1"
         self.index = 2
+        self.icon = imagect.icon("console.png")
         self.callable = self.cb
 
     def cb(self):
@@ -30,7 +32,7 @@ method 2
 """
 
 
-@addActFun("help.demo.exit2", text="Exit2", index=1)
+@addActFun("help.demo.exit2", text="Exit2", index=1, icon=imagect.icon("console.png"))
 def appexit():
     app.getQtApp().exit()
 

@@ -14,8 +14,9 @@ import imagect.core.opener.image
 import imagect.core.opener.opener
 import imagect.core.opener.vol
 import imagect.core.image.toolbox
-import imagect.example.menu
-import imagect.example.plugin.smooth_plugin
+import imagect.extern.example.menu
+import imagect.extern.example.plugin.smooth_plugin
+import imagect.extern.B
 
 from zope.component import getGlobalSiteManager
 

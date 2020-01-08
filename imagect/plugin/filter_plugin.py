@@ -67,5 +67,17 @@ class SliceFilterPlugin(FilterPlugIn):
         return True, slice
 
 
+class StackFilterPlugin(FilterPlugIn):
+
+    def run(self, arg, imp):
+            s = imp.getStack().data.copy() #numpy ndarray
+            ret, s = self.process_stack(s, arg, imp)
+            if ret:
+                imp.updateStack(s)
+
+    def process_stack(self, stack, arg, imp):
+        return True, stack
+
+
 if __name__ == "__main__":
     print(PlugInFlag(2))

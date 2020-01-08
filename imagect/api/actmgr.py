@@ -43,9 +43,9 @@ class IAction(object):
 #     ["icon", "callable", "id", "pid", "title", "index", "widget"]
 # )
 
-def createAction(id, title, callable=None, index=0, shortcut=None):
+def createAction(id, title, callable=None, index=0, shortcut=None, icon=""):
     return IAction(
-        icon="",
+        icon=icon,
         id=id,
         title=title,
         index=index,
@@ -55,9 +55,9 @@ def createAction(id, title, callable=None, index=0, shortcut=None):
     )
 
 
-def createWAction(id, title, widget=None, index=0, shortcut=None):
+def createWAction(id, title, widget=None, index=0, shortcut=None, icon=""):
     return IAction(
-        icon="",
+        icon=icon,
         id=id,
         title=title,
         index=index,
@@ -67,9 +67,9 @@ def createWAction(id, title, widget=None, index=0, shortcut=None):
     )
 
 
-def createFecthAction(id, title, fetch, index=0, shortcut=None):
+def createFecthAction(id, title, fetch, index=0, shortcut=None, icon=""):
     return IAction(
-        icon="",
+        icon=icon,
         id=id,
         title=title,
         index=index,
@@ -206,9 +206,9 @@ def register_action(klass) :
     addAct(act)
 
 
-def addActFun(id: str, text: str, index=0, shortcut=None):
+def addActFun(id: str, text: str, index=0, shortcut=None, icon=""):
     def add(callable):
-        a = createAction(id, title=text, callable=callable, index=index, shortcut=shortcut)
+        a = createAction(id, title=text, callable=callable, index=index, shortcut=shortcut, icon=icon)
         addAct(a)
 
     return add

@@ -11,7 +11,12 @@ qAppStopped = Subject()
 mainWinShowed = Subject()
 mainWinHide = Subject()
 
+imagePlusAdd = Subject()
 
+
+def addImagePlus(imp) :
+    imagePlusAdd.on_next(imp)
+    
 
 def getCurrentImagePlus():
     """

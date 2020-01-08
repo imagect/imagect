@@ -61,4 +61,5 @@ class SmoothPlugin(SliceFilterPlugin):
         return True, filters.gaussian(s, arg.width)
 
 
+
 renameAct("help.example.plugin", "Plugin")

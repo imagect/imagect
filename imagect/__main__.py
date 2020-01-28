@@ -17,10 +17,11 @@ import imagect.core.image.toolbox
 import imagect.extern.example.menu
 import imagect.extern.example.plugin.smooth_plugin
 import imagect.extern.B
+import imagect.extern.pg
 
 from zope.component import getGlobalSiteManager
 
-import imagect.example
+# import imagect.example
 
 def __main__() :
     gsm = getGlobalSiteManager()

@@ -11,7 +11,7 @@ class Opener(object) :
 
 # add to menu
 from imagect.api.actmgr import addActFun, renameAct
-@addActFun("file.open.sample", "Sample", index =1, shortcut="F12")
+@addActFun("file.open.cheeseboard", "ChessBoard", index =1, shortcut="F12")
 def newimage() :
     sample = ds.DataSet.fromSample("chessboard").astype(np.float32)
     ds.get().add(sample)
@@ -22,5 +22,26 @@ def newimage() :
     if sm :
         sm.insertVolImagePlus(sample)
 
+@addActFun("file.open.vol3d", "Vol", index =1)
+def newimage() :
+    sample = ds.DataSet.fromSample("vol").astype(np.float32)
+    ds.get().add(sample)
 
+    import imagect.api.viewmgr as vm
+
+    sm = vm.get()
+    if sm :
+        sm.insertVolImagePlus(sample)
+
+
+@addActFun("file.open.dydrogen", "Hydrogen", index =1)
+def newimage() :
+    sample = ds.DataSet.fromSample("Hydrogen").astype(np.float32)
+    ds.get().add(sample)
+
+    import imagect.api.viewmgr as vm
+
+    sm = vm.get()
+    if sm :
+        sm.insertVolImagePlus(sample)
 

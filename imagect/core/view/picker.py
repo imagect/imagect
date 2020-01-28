@@ -71,6 +71,8 @@ class PickerMachine(HasTraits):
         elif me.button() == Qt.RightButton:
             info.button = Button.Right
             info.code = CommandCode.End
+        elif me.button() == Qt.MiddleButton :
+            info.button = Button.Right
         else:
             info.button = Button.No
 
@@ -84,8 +86,10 @@ class PickerMachine(HasTraits):
 
         if me.button() == Qt.LeftButton:
             return Button.Left
-        else:
+        elif me.button() == Qt.RightButton:
             return Button.Right
+        else:
+            return Button.No
 
     def transition(self, me: QGraphicsSceneMouseEvent) -> List[CmdInfo]:
 

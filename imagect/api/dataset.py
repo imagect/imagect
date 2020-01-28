@@ -1,15 +1,15 @@
 from zope.interface import implementer
 from zope.component import getGlobalSiteManager
-from collections import defaultdict
+# from collections import defaultdict
 from traits.api import *
-from traitsui.api import *
-from traitsui.menu import OKButton, CancelButton
-import numpy as np
-import imagect.api.datasample as dsample
+# from traitsui.api import *
+# from traitsui.menu import OKButton, CancelButton
+# import numpy as np
+# import imagect.api.datasample as dsample
 from zope.interface import Interface
 from zope.component import getUtility
-import uuid
-from rx.subject import Subject
+# import uuid
+# from rx.subject import Subject
 from imagect.ic import ImageStack, DataMeta
 
 # TODO dataset input

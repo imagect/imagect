@@ -41,7 +41,7 @@ first
 
 
 #graph
-pyqtgraph
+# pyqtgraph
 
 # image
 scikit-image

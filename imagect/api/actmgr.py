@@ -270,7 +270,7 @@ class ActMgr(object):
             if act.pid not in self.actions.keys():
                 keys = act.pid.split(".")
                 grandpa = ".".join(keys[:-1])
-                pa = createAction(act.pid, act.pid)
+                pa = createAction(act.pid, keys[-1])
                 if grandpa == "":  # child.id == child.pid == ""
                     self.actions[pa.id] = pa
                 else:

@@ -18,7 +18,7 @@ class DataMeta(HasTraits):
     reader = Type()
 
 
-class ImageStack(HasTraits):
+class ImageStack(np.ndarray, HasTraits):
 
     """
     ImageStack
@@ -69,46 +69,55 @@ class ImageStack(HasTraits):
             data = dsample.vol()
             s, w, h = data.shape
             data.resize((s, w, h, 1))
-            self.data = data
+            self._data = data
+
+    def ndarray(self):
+        return self._data
+
+    def setData(self, data):
+        attrs = ["__getitem__"]
+        for f in attrs :
+            setattr(self, f, getattr(data, f))
+        self._data = data
 
     def astype(self, t):
         ds = ImageStack()
-        ds.data = self.data.astype(t)
+        ds.setData(self.ndarray().astype(t))
         return ds
 
     def _get_dtype(self):
-        return self.data.dtype
+        return self._data.dtype
 
     def _set_dtype(self, type):
-        self.data.astype(type)
+        self._data.astype(type)
 
     def _get_shape(self):
-        return self.data.shape
+        return self._data.shape
 
     def _get_layer(self):
-        shape = self.data.shape
+        shape = self._data.shape
         assert len(shape) == 4
         return shape[0]
 
     def _get_height(self):
-        shape = self.data.shape
+        shape = self._data.shape
         assert len(shape) == 4
         return shape[1]
 
     def _get_width(self):
-        shape = self.data.shape
+        shape = self._data.shape
         assert len(shape) == 4
         return shape[2]
 
     def _get_channel(self):
-        shape = self.data.shape
+        shape = self._data.shape
         assert len(shape) == 4
         assert shape[3] == 1 or shape[3] == 3 or shape[3] == 4
         return shape[3]
 
     def getSlice(self, s):
         assert s > -1 and s < self.layer
-        s = self.data[s, :, :, :]
+        s = self._data[s, :, :, :]
         if self.channel == 1:
             s = s.squeeze(axis=2)
         return s
@@ -138,7 +147,7 @@ class ImageStack(HasTraits):
         # print(self.data.dtype)
         # imagect.showImage(copy.astype(self.data.dtype))
 
-        self.data[index] = copy.astype(self.data.dtype)
+        self._data[index] = copy.astype(self._data.dtype)
         return True
 
     def asSlice(self):
@@ -146,7 +155,7 @@ class ImageStack(HasTraits):
         以(height, width, channel)的格式导出数据
         """
         assert self.layer == 1
-        return self.data.reshape(self.height, self.width, self.channel)
+        return self._data.reshape(self.height, self.width, self.channel)
 
     def asGray(self):
         """
@@ -154,7 +163,7 @@ class ImageStack(HasTraits):
         """
         assert self.layer == 1
         assert self.channel == 1
-        return self.data.reshape(self.height, self.width)
+        return self._data.reshape(self.height, self.width)
 
     traits_view = View(
         Group(
@@ -182,7 +191,7 @@ class ImageStack(HasTraits):
         s, w, h = data.shape
         d = data.reshape((s, w, h, 1))
         ds = ImageStack()
-        ds.data = d
+        ds.setData(d)
 
         meta = DataMeta()
         meta.category = "vol"
@@ -195,7 +204,7 @@ class ImageStack(HasTraits):
         h, w, c = data.shape
         d = data.reshape((1, h, w, c))
         ds = ImageStack()
-        ds.data = d
+        ds.setData(d)
 
         meta = DataMeta()
         meta.category = "rgb"
@@ -208,7 +217,7 @@ class ImageStack(HasTraits):
         h, w = data.shape
         d = data.reshape((1, h, w, 1))
         ds = ImageStack()
-        ds.data = d
+        ds.setData(d)
 
         meta = DataMeta()
         meta.category = "gray"

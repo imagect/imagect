@@ -167,3 +167,4 @@ class QtUiScheduler(PeriodicScheduler):
             timer.deleteLater()
 
         return CompositeDisposable(sad, Disposable(dispose))
+

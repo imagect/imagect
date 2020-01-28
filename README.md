@@ -7,6 +7,16 @@ pip uninstall pyqtgraph
 
 PYTHONPATH : ${workspaceFolder}:${workspaceFolder}/3rd/pyqtgraph:${PYTHONPATH}
 
+# 2020.1.4
+
+[]软件名：ImageProspector
+
+[]去掉zope库依赖。是不是只用到了getUtility函数?
+
+[]自定义Trait类型，实现数据范围的限制
+
+[]通过“配置信息”自动生成界面，而不是手动写界面代码
+
 # todo
 
 [] 第三方模块加载，第三方模块放在extern中，每个目录为一组独立的插件，动态加载

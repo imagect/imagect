@@ -32,16 +32,17 @@ class CodeEditorDemo(HasTraits):
 
     # Define a trait to view:
     code_sample = Code(
-        """%matplotlib
-import imagect.api.util as iu
-from matplotlib import pyplot as plt
-import numpy as np
-X = np.linspace(-np.pi, np.pi, 256, endpoint=True)
-C, S = np.cos(X), np.sin(X)
-plt.plot(X, C)
-plt.plot(X, S)
-plt.show()
-""")
+        """
+    %matplotlib
+    import imagect.api.util as iu
+    from matplotlib import pyplot as plt
+    import numpy as np
+    X = np.linspace(-np.pi, np.pi, 256, endpoint=True)
+    C, S = np.cos(X), np.sin(X)
+    plt.plot(X, C)
+    plt.plot(X, S)
+    plt.show()
+    """)
 
     # Display specification:
     code_group = Group(
